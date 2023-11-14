@@ -1,4 +1,4 @@
-# Project Name - Backend
+# CS353 - Backend
 
 ## Overview
 This repository contains the backend implementation for the CS353 course project. The backend is built using Java with the Spring framework and utilizes JDBC for database access. The PostgreSQL database is hosted by ElephantSQL, and Maven is used for managing project dependencies.
