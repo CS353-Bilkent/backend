@@ -19,13 +19,13 @@ import java.util.Date;
 @Component
 public class JwtTokenUtil {
 
-    @Value("${spring.jwt.secret}")
+    @Value("${jwt.secret.key}")
     private String secretKey;
 
-    @Value("${spring.jwt.ttl}")
+    @Value("${jwt.ttl}")
     private long ttl;
 
-    @Value("${spring.jwt.issuer}")
+    @Value("${jwt.issuer}")
     private String issuer;
 
     public String generateAccessToken(User user) {
