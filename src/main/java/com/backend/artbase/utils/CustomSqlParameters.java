@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -125,7 +124,7 @@ public final class CustomSqlParameters {
     }
 
     public void checkParams(String sql) {
-        checkParams(sql, params);
+        this.checkParams(sql, params);
     }
 
     private void checkParams(String sql, MapSqlParameterSource params) {

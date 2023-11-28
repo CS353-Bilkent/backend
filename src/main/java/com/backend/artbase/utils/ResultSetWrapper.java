@@ -1,7 +1,6 @@
 package com.backend.artbase.utils;
 
 import java.math.BigDecimal;
-import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +10,6 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class ResultSetWrapper {
 
