@@ -1,0 +1,37 @@
+{"properties": [
+  {
+    "name": "jwt.secret.key",
+    "type": "java.lang.String",
+    "description": "JWT Secret Key"
+  },
+  {
+    "name": "jwt.ttl",
+    "type": "java.lang.String",
+    "description": "JWT TTL"
+  },
+  {
+    "name": "jwt.issuer",
+    "type": "java.lang.String",
+    "description": "JWT Issuer"
+  },
+  {
+    "name": "db.url",
+    "type": "java.lang.String",
+    "description": "Database connection URL"
+  },
+  {
+    "name": "db.driver",
+    "type": "java.lang.String",
+    "description": "Database driver class"
+  },
+  {
+    "name": "db.username",
+    "type": "java.lang.String",
+    "description": "Database username"
+  },
+  {
+    "name": "db.password",
+    "type": "java.lang.String",
+    "description": "Database password"
+  }
+]}
