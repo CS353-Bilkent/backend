@@ -3,18 +3,26 @@ package com.backend.artbase.config;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.backend.artbase.utils.CustomJdbcTemplate;
+import com.backend.artbase.utils.CustomSqlParameters;
+import com.backend.artbase.utils.ResultSetWrapper;
+
 @Component
 public class DatabaseConnectionChecker {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final CustomJdbcTemplate jdbcTemplate;
 
-    public DatabaseConnectionChecker(JdbcTemplate jdbcTemplate) {
+    public DatabaseConnectionChecker(CustomJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     public void checkDatabaseConnection() {
         try {
-            jdbcTemplate.queryForObject("SELECT 1", Integer.class);
+            jdbcTemplate.queryForObject("SELECT 1", CustomSqlParameters.create(), (rs, rnum) -> {
+                ResultSetWrapper rsw = new ResultSetWrapper(rs);
+                return 1;
+            });
+
             System.out.println("Database connection is successful!");
         } catch (Exception e) {
             System.err.println("Error connecting to the database: " + e.getMessage());
