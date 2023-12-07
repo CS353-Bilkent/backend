@@ -31,13 +31,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
     private final ObjectMapper objectMapper;
 
-    private final List<String> EXCLUDE_URL_STARTS_WITH = Arrays.asList("/public", "/auth", "/documentation", "/swagger-ui");
+    private final List<String> EXCLUDE_URL_STARTS_WITH = Arrays.asList("/public", "/auth", "/documentation", "/swagger-ui", "/*");
     private final List<String> INCLUDE_URLS = Arrays.asList("/auth/logout", "/auth/change-password");
     private final String EMPTY_URL = "/";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        System.out.println("Filtering");
         try {
             if (!hasAuthorizationBearer(request))
                 throw new AuthRuntimeException("No authorization header is present", HttpStatus.UNAUTHORIZED);

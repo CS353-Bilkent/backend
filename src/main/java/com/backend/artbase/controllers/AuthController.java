@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.artbase.dtos.auth.AuthResponse;
-import com.backend.artbase.dtos.auth.LoginRequestEmail;
-import com.backend.artbase.dtos.auth.LoginRequestUsername;
+import com.backend.artbase.dtos.auth.LoginRequest;
 import com.backend.artbase.dtos.auth.RegisterRequest;
 import com.backend.artbase.entities.ApiResponse;
 import com.backend.artbase.services.AuthService;
@@ -27,15 +26,9 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.<AuthResponse>builder().operationResultData(authService.registerUser(registerDto)).build());
     }
 
-    @PostMapping("/login_email")
-    public ResponseEntity<ApiResponse<AuthResponse>> loginWithEmail(@RequestBody LoginRequestEmail loginRequest) {
-        return ResponseEntity.ok(ApiResponse.<AuthResponse>builder().operationResultData(authService.loginWithEmail(loginRequest)).build());
-    }
-
-    @PostMapping("/login_username")
-    public ResponseEntity<ApiResponse<AuthResponse>> loginWithUsername(@RequestBody LoginRequestUsername loginRequest) {
-        return ResponseEntity
-                .ok(ApiResponse.<AuthResponse>builder().operationResultData(authService.loginWithUsername(loginRequest)).build());
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<AuthResponse>> loginWithEmail(@RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(ApiResponse.<AuthResponse>builder().operationResultData(authService.login(loginRequest)).build());
     }
 
 }

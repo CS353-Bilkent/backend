@@ -7,8 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.backend.artbase.daos.UserDao;
 import com.backend.artbase.dtos.auth.AuthResponse;
-import com.backend.artbase.dtos.auth.LoginRequestEmail;
-import com.backend.artbase.dtos.auth.LoginRequestUsername;
+import com.backend.artbase.dtos.auth.LoginRequest;
 import com.backend.artbase.dtos.auth.RegisterRequest;
 import com.backend.artbase.entities.User;
 import com.backend.artbase.entities.UserType;
@@ -30,12 +29,12 @@ public class AuthService {
 
     public AuthResponse registerUser(RegisterRequest registerDto) {
 
-        isValidUsernameFormat(registerDto.getUserName());
+        isValidUsernameFormat(registerDto.getUsername());
         isValidEmail(registerDto.getEmail());
 
         String encodedPassword = passwordEncoder.encode(registerDto.getUserPassword());
         User user = new User();
-        user.setUserName(registerDto.getUserName());
+        user.setUserName(registerDto.getUsername());
         user.setEmail(registerDto.getEmail());
         user.setUserPassword(encodedPassword);
         user.setUserType(UserType.NORMAL);
@@ -43,42 +42,6 @@ public class AuthService {
         userDao.saveUser(user);
 
         mailService.sendRegisterMail(user.getEmail());
-
-        String jwt = jwtTokenUtil.generateAccessToken(userDao.getUserByUsername(user.getUserName()));
-
-        return AuthResponse.builder().jwtToken(jwt).user_id(user.getUserId()).build();
-    }
-
-    public AuthResponse loginWithUsername(LoginRequestUsername loginRequest) {
-        isValidUsernameFormat(loginRequest.getUsername());
-
-        User user = userDao.getUserByUsername(loginRequest.getUsername());
-
-        if (user == null) {
-            throw new UserRuntimeException("User not found", HttpStatus.NOT_FOUND);
-        }
-
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getUserPassword())) {
-            throw new UserRuntimeException("Password did not match", HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        String jwt = jwtTokenUtil.generateAccessToken(userDao.getUserByUsername(user.getUserName()));
-
-        return AuthResponse.builder().jwtToken(jwt).user_id(user.getUserId()).build();
-    }
-
-    public AuthResponse loginWithEmail(LoginRequestEmail loginRequest) {
-
-        isValidEmail(loginRequest.getEmail());
-        User user = userDao.getUserByEmail(loginRequest.getEmail());
-
-        if (user == null) {
-            throw new UserRuntimeException("User not found", HttpStatus.NOT_FOUND);
-        }
-
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getUserPassword())) {
-            throw new UserRuntimeException("Password did not match", HttpStatus.NOT_ACCEPTABLE);
-        }
 
         String jwt = jwtTokenUtil.generateAccessToken(userDao.getUserByUsername(user.getUserName()));
 
@@ -102,5 +65,22 @@ public class AuthService {
         }
 
         return true;
+    }
+
+    public AuthResponse login(LoginRequest loginRequest) {
+
+        User user = userDao.getUserByEmailOrUsername(loginRequest.getCreds());
+
+        if (user == null) {
+            throw new UserRuntimeException("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getUserPassword())) {
+            throw new UserRuntimeException("Password did not match", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        String jwt = jwtTokenUtil.generateAccessToken(userDao.getUserByUsername(user.getUserName()));
+
+        return AuthResponse.builder().jwtToken(jwt).user_id(user.getUserId()).build();
     }
 }

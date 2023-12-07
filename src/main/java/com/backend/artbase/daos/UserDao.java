@@ -82,7 +82,7 @@ public class UserDao {
                 .email(rsw.getString("email"))
                 .userName(rsw.getString("user_name"))
                 .userPassword(rsw.getString("user_password"))
-                .userType(UserType.valueOf(rsw.getString("user_type")))
+                .userType(UserType.fromCode(rsw.getString("user_type")))
                 .build();
             //@formatter:on
             });
@@ -119,5 +119,34 @@ public class UserDao {
             throw new UserRuntimeException("There is no user found with the given email", HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    public User getUserByEmailOrUsername(String emailOrUsername) {
+        CustomSqlParameters params = CustomSqlParameters.create();
+        params.put("emailOrUsername", emailOrUsername);
+
+        //@formatter:off
+        String sql =
+            "SELECT u.user_id, u.user_name, u.email, u.user_password, u.user_type " +
+            "FROM USERS u WHERE u.email = :emailOrUsername OR u.user_name = :emailOrUsername";
+        //@formatter:on
+
+        try {
+            return jdbcTemplate.queryForObject(sql, params, (rs, rnum) -> {
+                ResultSetWrapper rsw = new ResultSetWrapper(rs);
+
+                //@formatter:off
+                return User.builder()
+                    .userId(rsw.getInteger("user_id"))
+                    .email(rsw.getString("email"))
+                    .userName(rsw.getString("user_name"))
+                    .userPassword(rsw.getString("user_password"))
+                    .userType(UserType.valueOf(rsw.getString("user_type")))
+                    .build();
+                //@formatter:on
+            });
+        } catch (EmptyResultDataAccessException ex) {
+            throw new UserRuntimeException("There is no user found with the given email or username", HttpStatus.NOT_FOUND);
+        }
     }
 }
