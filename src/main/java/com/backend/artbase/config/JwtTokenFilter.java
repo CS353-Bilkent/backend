@@ -20,20 +20,20 @@ import com.backend.artbase.utils.JwtTokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    @Value("${jwt.secret.key}")
-    private String secretKey;
-
-    @Value("${jwt.header}")
-    private String header;
-
     private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
     private final ObjectMapper objectMapper;
+
+    private final List<String> EXCLUDE_URL_STARTS_WITH = Arrays.asList("/public", "/auth", "/documentation", "/swagger-ui");
+    private final List<String> INCLUDE_URLS = Arrays.asList("/auth/logout", "/auth/change-password");
+    private final String EMPTY_URL = "/";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -42,7 +42,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             if (!hasAuthorizationBearer(request))
                 throw new AuthRuntimeException("No authorization header is present", HttpStatus.UNAUTHORIZED);
 
-            String accessToken = getAccessToken(request);
+            String accessToken = getToken(request);
 
             if (!jwtTokenUtil.validateToken(accessToken))
                 throw new AuthRuntimeException("Unauthorized", HttpStatus.UNAUTHORIZED);
@@ -59,13 +59,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
     }
 
-    // dursun bakarız
-    private String extractToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(header);
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return INCLUDE_URLS.stream().noneMatch(include -> request.getServletPath().equals(include)) && EXCLUDE_URL_STARTS_WITH.stream()
+                .anyMatch(exclude -> request.getServletPath().startsWith(exclude) || request.getServletPath().equals(EMPTY_URL));
     }
 
     private boolean hasAuthorizationBearer(HttpServletRequest request) {
@@ -74,7 +71,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         return !(ObjectUtils.isEmpty(header) || !header.startsWith("Bearer"));
     }
 
-    private String getAccessToken(HttpServletRequest request) {
+    private String getToken(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
 
         String[] res = header.split(" ");
