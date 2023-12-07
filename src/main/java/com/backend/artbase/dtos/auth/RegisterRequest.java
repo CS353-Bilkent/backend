@@ -1,7 +1,6 @@
-package com.backend.artbase.entities;
+package com.backend.artbase.dtos.auth;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -10,12 +9,9 @@ import lombok.Setter;
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
-@Builder
-public class User {
+public class RegisterRequest {
 
-    private Integer userId;
-    private String userName;
+    private String username;
     private String email;
     private String userPassword;
-    private UserType userType;
 }
