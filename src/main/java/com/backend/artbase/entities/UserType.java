@@ -1,12 +1,12 @@
 package com.backend.artbase.entities;
 
 public enum UserType {
-    ADMIN('A'),
-    CUSTOMER('C'),
-    EMPLOYEE('E'),
-    NEW_USER('N'),
-    GUEST('G'),
-    EXTERNAL('X');
+    ARTIST('A'),
+    COLLECTOR('C'),
+    ENTHUSIAST('E'),
+    NORMAL('N'),
+    GALLERY('G'),
+    ADMIN('X');
 
     private final char code;
 

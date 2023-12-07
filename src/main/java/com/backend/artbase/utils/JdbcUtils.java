@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class JdbcUtils {
 
     public static Object convert(Date value) {
