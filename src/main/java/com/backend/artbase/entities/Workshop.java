@@ -43,6 +43,4 @@ public class Workshop {
     @NonNull
     private String workshopType;
 
-    // Additional getters and setters as needed
-
 }
