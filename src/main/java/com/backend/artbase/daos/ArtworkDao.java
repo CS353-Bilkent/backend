@@ -5,12 +5,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 import com.backend.artbase.entities.Artwork;
+import com.backend.artbase.entities.ArtworkFilters;
 import com.backend.artbase.utils.CustomJdbcTemplate;
 import com.backend.artbase.utils.CustomSqlParameters;
 import com.backend.artbase.utils.ResultSetWrapper;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Repository
@@ -163,5 +165,69 @@ public class ArtworkDao {
                 .build();
             //@formatter:on
         });
+    }
+
+    public List<Artwork> getArtworkWithFilters(ArtworkFilters filters) {
+        CustomSqlParameters params = CustomSqlParameters.create();
+
+        addFilterParams(params, "medium_ids", filters.getMediumIds());
+        addFilterParams(params, "material_ids", filters.getMaterialIds());
+        addFilterParams(params, "rarity_ids", filters.getRarityIds());
+        addFilterParams(params, "artwork_type_ids", filters.getArtworkTypeIds());
+
+        //@formatter:off
+        String sql =
+            "SELECT a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
+            "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
+            "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
+            "a.artwork_description " +
+            "FROM artwork a " +
+            "WHERE (:medium_ids IS NULL OR a.medium_id IN (SELECT * FROM STRING_TO_TABLE(:medium_ids, ','))) " +
+            "AND (:material_ids IS NULL OR a.material_id IN (SELECT * FROM STRING_TO_TABLE(:material_ids, ','))) " +
+            "AND (:rarity_ids IS NULL OR a.rarity_id IN (SELECT * FROM STRING_TO_TABLE(:rarity_ids, ','))) " +
+            "AND (:artwork_type_ids IS NULL OR a.artwork_type_id IN (SELECT * FROM STRING_TO_TABLE(:artwork_type_ids, ','))) " +
+            "ORDER BY " +
+            "CASE WHEN (:medium_ids IS NOT NULL AND a.medium_id IN (SELECT * FROM STRING_TO_TABLE(:medium_ids, ','))) THEN 1 ELSE 0 END + " +
+            "CASE WHEN (:material_ids IS NOT NULL AND a.material_id IN (SELECT * FROM STRING_TO_TABLE(:material_ids, ','))) THEN 1 ELSE 0 END + " +
+            "CASE WHEN (:rarity_ids IS NOT NULL AND a.rarity_id IN (SELECT * FROM STRING_TO_TABLE(:rarity_ids, ','))) THEN 1 ELSE 0 END + " +
+            "CASE WHEN (:artwork_type_ids IS NOT NULL AND a.artwork_type_id IN (SELECT * FROM STRING_TO_TABLE(:artwork_type_ids, ','))) THEN 1 ELSE 0 END " +
+            "DESC";
+        //@formatter:on
+
+        return jdbcTemplate.query(sql, params, (rs, rnum) -> {
+            ResultSetWrapper rsw = new ResultSetWrapper(rs);
+
+            //@formatter:off
+            return Artwork.builder()
+                .userId(rsw.getInteger("user_id"))
+                .artistId(rsw.getInteger("artist_id"))
+                .artworkId(rsw.getInteger("artwork_id"))
+                .fixedPrice(rsw.getDouble("fixed_price"))
+                .artworkTypeId(rsw.getInteger("artwork_type_id"))
+                .timePeriod(rsw.getString("time_period"))
+                .rarityId(rsw.getInteger("rarity_id"))
+                .mediumId(rsw.getInteger("medium_id"))
+                .sizeX(rsw.getDouble("size_x"))
+                .sizeY(rsw.getDouble("size_y"))
+                .sizeZ(rsw.getDouble("size_z"))
+                .materialId(rsw.getInteger("material_id"))
+                .artworkLocation(rsw.getString("artwork_location"))
+                .artMovementId(rsw.getInteger("art_movement_id"))
+                .acquisitionWay(rsw.getString("acquisition_way"))
+                .artworkDescription(rsw.getString("artwork_description"))
+                .build();
+            //@formatter:on
+        });
+    }
+
+    // Modified helper method to add filter parameters as comma-separated
+    // strings
+    private void addFilterParams(CustomSqlParameters params, String paramName, List<Integer> paramValues) {
+        if (paramValues != null && !paramValues.isEmpty()) {
+            String paramValueString = paramValues.stream().map(String::valueOf).collect(Collectors.joining(","));
+            params.put(paramName, paramValueString);
+        } else {
+            params.put(paramName, "");
+        }
     }
 }
