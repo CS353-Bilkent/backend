@@ -27,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<AuthResponse>> loginWithEmail(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(ApiResponse.<AuthResponse>builder().operationResultData(authService.login(loginRequest)).build());
     }
 
