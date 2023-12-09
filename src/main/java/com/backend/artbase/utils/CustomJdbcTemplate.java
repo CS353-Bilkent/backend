@@ -51,7 +51,8 @@ public class CustomJdbcTemplate {
             checkParams(sql, params.getParams());
             return namedParameterJdbcTemplate.queryForObject(sql, params.getParams(), rowMapper);
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            System.out.println("ERROR" + e.getMessage());
+            throw e;
         } catch (RuntimeException e) {
             System.out.println("Query for object runtime exception. SQL: " + sql);
             throw e;

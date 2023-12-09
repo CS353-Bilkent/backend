@@ -19,7 +19,7 @@ public class Artist {
     @NonNull
     private String artistName;
 
-    private Character gender;
+    private String gender;
 
     private String nationality;
 

@@ -11,7 +11,6 @@ import com.backend.artbase.utils.CustomJdbcTemplate;
 import com.backend.artbase.utils.CustomSqlParameters;
 import com.backend.artbase.utils.ResultSetWrapper;
 
-import ch.qos.logback.core.spi.ErrorCodes;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
