@@ -1,5 +1,6 @@
 package com.backend.artbase.entities;
 
+import jakarta.annotation.Nonnull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -9,6 +10,9 @@ import lombok.Setter;
 @Setter
 @Builder
 public class Artwork {
+
+    @Nonnull
+    private String artworkName;
 
     @NonNull
     private Integer userId;

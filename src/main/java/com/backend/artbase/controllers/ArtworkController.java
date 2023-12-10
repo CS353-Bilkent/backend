@@ -30,6 +30,7 @@ public class ArtworkController {
 @PostMapping("/upload")
     public ResponseEntity<ApiResponse<UploadArtworkResponse>> saveArtwork(
             @RequestPart(name = "image") MultipartFile[] images,
+            @RequestPart(name = "name") String artworkName,
             @RequestPart(name = "userId") Integer userId,
             @RequestPart(name = "artistId") Integer artistId,
             @RequestPart(name = "fixedPrice", required = false) Double fixedPrice,
@@ -49,10 +50,10 @@ public class ArtworkController {
     //@formatter:on
         try {
 
-            Artwork artwork = Artwork.builder().userId(userId).artistId(artistId).fixedPrice(fixedPrice).artworkTypeId(artworkTypeId)
-                    .timePeriod(timePeriod).rarityId(rarityId).mediumId(mediumId).sizeX(sizeX).sizeY(sizeY).sizeZ(sizeZ)
-                    .materialId(materialId).artworkLocation(artworkLocation).artMovementId(artMovementId).acquisitionWay(acquisitionWay)
-                    .artworkDescription(artworkDescription).build();
+            Artwork artwork = Artwork.builder().userId(userId).artistId(artistId).artworkName(artworkName).fixedPrice(fixedPrice)
+                    .artworkTypeId(artworkTypeId).timePeriod(timePeriod).rarityId(rarityId).mediumId(mediumId).sizeX(sizeX).sizeY(sizeY)
+                    .sizeZ(sizeZ).materialId(materialId).artworkLocation(artworkLocation).artMovementId(artMovementId)
+                    .acquisitionWay(acquisitionWay).artworkDescription(artworkDescription).build();
 
             artworkService.saveArtwork(artwork, images);
 

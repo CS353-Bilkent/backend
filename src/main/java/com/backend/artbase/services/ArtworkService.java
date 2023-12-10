@@ -15,12 +15,16 @@ import lombok.RequiredArgsConstructor;
 public class ArtworkService {
 
     private final ArtworkDao artworkDao;
+    private final FileService fileService;
 
-    public void saveArtwork(Artwork artwork, MultipartFile[] images) {
+    public void saveArtwork(Artwork artwork, MultipartFile[] images) throws Exception {
 
         Integer artworkId = artworkDao.getNextArtworkId();
         artwork.setArtworkId(artworkId);
         artworkDao.saveArtwork(artwork);
+
+        String filename = artworkId + "_" + artwork.getArtworkName();
+        fileService.uploadFiles(images, filename);
 
     }
 

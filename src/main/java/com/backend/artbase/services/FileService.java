@@ -41,15 +41,17 @@ public class FileService {
     @Value("${gcp.dir.name}")
     private String dirName;
 
-    public void uploadFiles(List<MultipartFile> files, String commonPrefix) {
-        for (MultipartFile file : files) {
-            String fileName = commonPrefix + file.getOriginalFilename();
+    public void uploadFiles(MultipartFile[] files, String commonPrefix) throws Exception {
+        for (int i = 0; i < files.length; i++) {
+            MultipartFile file = files[i];
+            String fileName = commonPrefix + "-" + i;
             uploadFile(file, fileName);
         }
     }
 
-    public void uploadFile(MultipartFile multipartFile, String fileName) {
+    public void uploadFile(MultipartFile multipartFile, String fileName) throws Exception {
 
+        String extension = checkFileExtension(multipartFile.getOriginalFilename());
         try {
 
             byte[] fileData = multipartFile.getBytes();
@@ -62,7 +64,7 @@ public class FileService {
             Storage storage = options.getService();
             Bucket bucket = storage.get(bucketId, Storage.BucketGetOption.fields());
 
-            Blob blob = bucket.create(dirName + "/" + fileName + "-" + checkFileExtension(fileName), fileData);
+            Blob blob = bucket.create(dirName + "/" + fileName + "-" + extension, fileData);
 
             if (blob != null) {
                 System.out.println("File successfully uploaded to GCS");
@@ -70,6 +72,7 @@ public class FileService {
             }
 
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new RuntimeFileException("An error occurred while storing data to GCS", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         throw new RuntimeFileException("An error occurred while storing data to GCS", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -77,7 +80,7 @@ public class FileService {
 
     private String checkFileExtension(String fileName) {
         if (fileName != null && fileName.contains(".")) {
-            String[] extensionList = { ".png", ".jpeg", ".pdf", ".doc", ".mp3" };
+            String[] extensionList = { ".png", ".jpeg", ".jpg" };
 
             for (String extension : extensionList) {
                 if (fileName.endsWith(extension)) {

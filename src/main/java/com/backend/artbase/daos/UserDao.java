@@ -42,7 +42,7 @@ public class UserDao {
 
         //@formatter:off
         String sql =
-            "SELECT u.user_id, u.user_name, u.email, u.user_password ,u.user_type"+
+            "SELECT u.user_id, u.user_name, u.email, u.user_password ,u.user_type "+
              "FROM USERS u WHERE u.user_id = :user_id";
         //@formatter:on
 
@@ -55,7 +55,7 @@ public class UserDao {
             .email(rsw.getString("email"))
             .userName(rsw.getString("user_name"))
             .userPassword(rsw.getString("user_password"))
-            .userType(UserType.valueOf(rsw.getString("user_type")))
+            .userType(UserType.fromCode(rsw.getString("user_type")))
             .build();
             //@formatter:on
         });
@@ -140,7 +140,7 @@ public class UserDao {
                     .email(rsw.getString("email"))
                     .userName(rsw.getString("user_name"))
                     .userPassword(rsw.getString("user_password"))
-                    .userType(UserType.valueOf(rsw.getString("user_type")))
+                    .userType(UserType.fromCode(rsw.getString("user_type")))
                     .build();
                 //@formatter:on
             });
