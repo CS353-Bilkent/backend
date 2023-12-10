@@ -17,7 +17,7 @@ public class ArtworkService {
     private final ArtworkDao artworkDao;
     private final FileService fileService;
 
-    public void saveArtwork(Artwork artwork, MultipartFile[] images) throws Exception {
+    public void saveArtwork(Artwork artwork, MultipartFile[] images) {
 
         Integer artworkId = artworkDao.getNextArtworkId();
         artwork.setArtworkId(artworkId);

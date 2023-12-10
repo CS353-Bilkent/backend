@@ -41,7 +41,7 @@ public class FileService {
     @Value("${gcp.dir.name}")
     private String dirName;
 
-    public void uploadFiles(MultipartFile[] files, String commonPrefix) throws Exception {
+    public void uploadFiles(MultipartFile[] files, String commonPrefix) {
         for (int i = 0; i < files.length; i++) {
             MultipartFile file = files[i];
             String fileName = commonPrefix + "-" + i;
@@ -49,7 +49,7 @@ public class FileService {
         }
     }
 
-    public void uploadFile(MultipartFile multipartFile, String fileName) throws Exception {
+    public void uploadFile(MultipartFile multipartFile, String fileName) {
 
         String extension = checkFileExtension(multipartFile.getOriginalFilename());
         try {
