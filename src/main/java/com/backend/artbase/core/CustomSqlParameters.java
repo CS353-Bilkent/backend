@@ -1,4 +1,4 @@
-package com.backend.artbase.utils;
+package com.backend.artbase.core;
 
 import java.math.BigDecimal;
 import java.sql.Types;
@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -15,6 +16,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterUtils;
 import org.springframework.jdbc.core.support.SqlLobValue;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
+
+import com.backend.artbase.utils.JdbcUtils;
 
 public final class CustomSqlParameters {
     private final MapSqlParameterSource params = new MapSqlParameterSource();
@@ -144,6 +147,15 @@ public final class CustomSqlParameters {
             }
         });
 
+    }
+
+    public static void addFilterParams(CustomSqlParameters params, String paramName, List<Integer> paramValues) {
+        if (paramValues != null && !paramValues.isEmpty()) {
+            String paramValueString = paramValues.stream().map(String::valueOf).collect(Collectors.joining(","));
+            params.put(paramName, paramValueString);
+        } else {
+            params.put(paramName, "");
+        }
     }
 
 }

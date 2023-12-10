@@ -1,4 +1,4 @@
-package com.backend.artbase.utils;
+package com.backend.artbase.core;
 
 import java.util.List;
 
@@ -51,7 +51,8 @@ public class CustomJdbcTemplate {
             checkParams(sql, params.getParams());
             return namedParameterJdbcTemplate.queryForObject(sql, params.getParams(), rowMapper);
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            System.out.println("Emoty result set for db" + e.getMessage());
+            throw e;
         } catch (RuntimeException e) {
             System.out.println("Query for object runtime exception. SQL: " + sql);
             throw e;
