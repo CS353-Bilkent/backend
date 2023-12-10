@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.backend.artbase.daos.FileDao;
 import com.backend.artbase.errors.RuntimeFileException;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Blob;
@@ -28,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class FileService {
+
+    private final FileDao fileDao;
 
     @Value("${gcp.config.file}")
     private String keyFile;
@@ -44,7 +47,23 @@ public class FileService {
     public void uploadFiles(MultipartFile[] files, String commonPrefix) {
         for (int i = 0; i < files.length; i++) {
             MultipartFile file = files[i];
-            String fileName = commonPrefix + "-" + i;
+            String fileName = commonPrefix + "_" + i;
+
+            Integer fileID = fileDao.getNextFileId();
+
+            fileDao.saveFile(fileID, fileName + checkFileExtension(file.getOriginalFilename()));
+            uploadFile(file, fileName);
+        }
+    }
+
+    public void uploadArtworkFiles(MultipartFile[] files, String commonPrefix, Integer artworkId) {
+        for (int i = 0; i < files.length; i++) {
+            MultipartFile file = files[i];
+            String fileName = commonPrefix + "_" + i;
+
+            Integer fileID = fileDao.getNextFileId();
+
+            fileDao.saveArtworkFile(fileID, fileName + checkFileExtension(file.getOriginalFilename()), artworkId);
             uploadFile(file, fileName);
         }
     }
