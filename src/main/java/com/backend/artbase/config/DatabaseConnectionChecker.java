@@ -3,9 +3,9 @@ package com.backend.artbase.config;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import com.backend.artbase.utils.CustomJdbcTemplate;
-import com.backend.artbase.utils.CustomSqlParameters;
-import com.backend.artbase.utils.ResultSetWrapper;
+import com.backend.artbase.core.CustomJdbcTemplate;
+import com.backend.artbase.core.CustomSqlParameters;
+import com.backend.artbase.core.ResultSetWrapper;
 
 @Component
 public class DatabaseConnectionChecker {

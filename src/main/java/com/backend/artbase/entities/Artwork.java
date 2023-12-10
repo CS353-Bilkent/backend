@@ -16,7 +16,6 @@ public class Artwork {
     @NonNull
     private Integer artistId;
 
-    @NonNull
     private Integer artworkId;
 
     private Double fixedPrice;

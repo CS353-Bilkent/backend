@@ -1,4 +1,4 @@
-package com.backend.artbase.utils;
+package com.backend.artbase.core;
 
 import java.math.BigDecimal;
 import java.sql.Clob;

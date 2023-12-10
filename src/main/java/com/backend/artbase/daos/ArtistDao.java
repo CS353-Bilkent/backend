@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
+import com.backend.artbase.core.CustomJdbcTemplate;
+import com.backend.artbase.core.CustomSqlParameters;
+import com.backend.artbase.core.ResultSetWrapper;
 import com.backend.artbase.entities.Artist;
-import com.backend.artbase.utils.CustomJdbcTemplate;
-import com.backend.artbase.utils.CustomSqlParameters;
-import com.backend.artbase.utils.ResultSetWrapper;
 
 import java.util.Optional;
 
