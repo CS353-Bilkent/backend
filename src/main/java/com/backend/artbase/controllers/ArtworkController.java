@@ -34,7 +34,7 @@ public class ArtworkController {
     //@formatter:off
 @PostMapping("/upload")
     public ResponseEntity<ApiResponse<UploadArtworkResponse>> saveArtwork(
-            @RequestPart(name = "image") MultipartFile[] images,
+            @RequestPart(name = "image") MultipartFile images,
             @RequestPart(name = "name") String artworkName,
             @RequestPart(name = "userId") Integer userId,
             @RequestPart(name = "artistId") Integer artistId,

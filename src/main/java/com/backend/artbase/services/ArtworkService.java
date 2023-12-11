@@ -1,5 +1,6 @@
 package com.backend.artbase.services;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,14 +25,14 @@ public class ArtworkService {
     private final ArtworkDao artworkDao;
     private final FileService fileService;
 
-    public void saveArtwork(Artwork artwork, MultipartFile[] images) {
+    public void saveArtwork(Artwork artwork, MultipartFile image) {
 
         Integer artworkId = artworkDao.getNextArtworkId();
         artwork.setArtworkId(artworkId);
         artworkDao.saveArtwork(artwork);
 
-        String filename = artworkId + "_" + artwork.getArtworkName();
-        fileService.uploadFiles(images, filename);
+        String filename = artworkId.toString();
+        fileService.uploadArtworkFiles(List.of(image).toArray(new MultipartFile[1]), filename, artworkId);
 
     }
 
