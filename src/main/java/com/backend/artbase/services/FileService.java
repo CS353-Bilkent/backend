@@ -46,30 +46,6 @@ public class FileService {
     @Value("${gcp.dir.name}")
     private String dirName;
 
-    public void uploadFiles(MultipartFile[] files, String commonPrefix) {
-        for (int i = 0; i < files.length; i++) {
-            MultipartFile file = files[i];
-            String fileName = commonPrefix + "_" + i;
-
-            Integer fileID = fileDao.getNextFileId();
-
-            fileDao.saveFile(fileID, fileName + checkFileExtension(file.getOriginalFilename()));
-            uploadFile(file, fileName);
-        }
-    }
-
-    public void uploadArtworkFiles(MultipartFile[] files, String commonPrefix, Integer artworkId) {
-        for (int i = 0; i < files.length; i++) {
-            MultipartFile file = files[i];
-            String fileName = commonPrefix + "_" + i;
-
-            Integer fileID = fileDao.getNextFileId();
-
-            fileDao.saveArtworkFile(fileID, fileName + checkFileExtension(file.getOriginalFilename()), artworkId);
-            uploadFile(file, fileName);
-        }
-    }
-
     public void uploadFile(MultipartFile multipartFile, String fileName) {
 
         String extension = checkFileExtension(multipartFile.getOriginalFilename());
@@ -85,7 +61,7 @@ public class FileService {
             Storage storage = options.getService();
             Bucket bucket = storage.get(bucketId, Storage.BucketGetOption.fields());
 
-            Blob blob = bucket.create(dirName + "/" + fileName + "-" + extension, fileData);
+            Blob blob = bucket.create(dirName + "/" + fileName + extension, fileData);
 
             if (blob != null) {
                 System.out.println("File successfully uploaded to GCS");

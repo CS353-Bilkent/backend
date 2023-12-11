@@ -26,16 +26,9 @@ public class FileController {
     private final FileService fileService;
 
     @PostMapping("/upload")
-    public ResponseEntity<ApiResponse<?>> uploadFile(HttpServletRequest request, @RequestPart MultipartFile file) {
-        User user = (User) request.getAttribute("user");
-        fileService.uploadFile(file, "test_file" + user.getUserName());
-        return ResponseEntity.ok(ApiResponse.builder().build());
-    }
-
-    @PostMapping("/uploadMulti")
-    public ResponseEntity<ApiResponse<?>> uploadFile(HttpServletRequest request, @RequestPart MultipartFile[] files) {
-        User user = (User) request.getAttribute("user");
-        fileService.uploadFiles(files, "test_file" + user.getUserName());
+    public ResponseEntity<ApiResponse<?>> uploadFile(HttpServletRequest request, @RequestPart MultipartFile file,
+            @RequestPart String filename) {
+        fileService.uploadFile(file, filename);
         return ResponseEntity.ok(ApiResponse.builder().build());
     }
 
