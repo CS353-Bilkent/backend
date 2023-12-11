@@ -289,7 +289,8 @@ public class ArtworkDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            return Artwork.builder() //TODO: artworkName eklenmeli mi?
+            //TODO: artworkName eklenmeli mi?
+            return Artwork.builder()
                     .userId(rsw.getInteger("user_id"))
                     .artistId(rsw.getInteger("artist_id"))
                     .artworkId(rsw.getInteger("artwork_id"))
@@ -330,7 +331,8 @@ public class ArtworkDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            return Artwork.builder() //TODO: artworkName eklenmeli mi?
+            //TODO: artworkName eklenmeli mi?
+            return Artwork.builder()
                     .userId(rsw.getInteger("user_id"))
                     .artistId(rsw.getInteger("artist_id"))
                     .artworkId(rsw.getInteger("artwork_id"))
@@ -386,7 +388,8 @@ public class ArtworkDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            return Artwork.builder() //TODO: artworkName eklenmeli mi?
+            //TODO: artworkName eklenmeli mi?
+            return Artwork.builder()
                     .userId(rsw.getInteger("user_id"))
                     .artistId(rsw.getInteger("artist_id"))
                     .artworkId(rsw.getInteger("artwork_id"))
@@ -442,7 +445,8 @@ public class ArtworkDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            return Artwork.builder() //TODO: artworkName eklenmeli mi?
+            //TODO: artworkName eklenmeli mi?
+            return Artwork.builder()
                     .userId(rsw.getInteger("user_id"))
                     .artistId(rsw.getInteger("artist_id"))
                     .artworkId(rsw.getInteger("artwork_id"))
