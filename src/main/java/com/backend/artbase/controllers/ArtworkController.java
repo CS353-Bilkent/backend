@@ -1,7 +1,5 @@
 package com.backend.artbase.controllers;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,18 +9,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.artbase.dtos.artwork.GetArtworkDisplayDetailsResponse;
-import com.backend.artbase.dtos.artwork.GetArtworkFullDetailsResponse;
 import com.backend.artbase.dtos.artwork.UploadArtworkResponse;
-import com.backend.artbase.dtos.auth.AuthResponse;
 import com.backend.artbase.entities.ApiResponse;
 import com.backend.artbase.entities.Artwork;
 import com.backend.artbase.errors.ArtworkException;
 import com.backend.artbase.services.ArtworkService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,7 +28,7 @@ public class ArtworkController {
     //@formatter:off
 @PostMapping("/upload")
     public ResponseEntity<ApiResponse<UploadArtworkResponse>> saveArtwork(
-            @RequestPart(name = "image") MultipartFile images,
+            @RequestPart(name = "image") MultipartFile image,
             @RequestPart(name = "name") String artworkName,
             @RequestPart(name = "userId") Integer userId,
             @RequestPart(name = "artistId") Integer artistId,
@@ -60,25 +54,24 @@ public class ArtworkController {
                     .sizeZ(sizeZ).materialId(materialId).artworkLocation(artworkLocation).artMovementId(artMovementId)
                     .acquisitionWay(acquisitionWay).artworkDescription(artworkDescription).build();
 
-            artworkService.saveArtwork(artwork, images);
-
+            return ResponseEntity.ok(
+                    ApiResponse.<UploadArtworkResponse>builder().operationResultData(artworkService.saveArtwork(artwork, image)).build());
         } catch (NullPointerException e) {
             throw new ArtworkException("Required information must be provided", HttpStatus.BAD_REQUEST);
         }
 
-        return ResponseEntity.ok(ApiResponse.<UploadArtworkResponse>builder().operationResultData(null).build());
     }
 
-    @GetMapping("/{artworkId}")
+    @PostMapping("/addImage/{artworkId}")
+    public ResponseEntity<ApiResponse<?>> addImageToArtwork(@PathVariable Integer artworkId, @RequestPart MultipartFile image) {
+        artworkService.addImageToArtwork(image, artworkId);
+        return ResponseEntity.ok(ApiResponse.builder().build());
+    }
+
+    @GetMapping("/details/{artworkId}")
     public ResponseEntity<ApiResponse<GetArtworkDisplayDetailsResponse>> getArtworkDisplayDetails(@PathVariable Integer artworkId) {
         return ResponseEntity.ok(ApiResponse.<GetArtworkDisplayDetailsResponse>builder()
                 .operationResultData(artworkService.getArtworkDisplayDetails(artworkId)).build());
-    }
-
-    @GetMapping("/{artworkId}")
-    public ResponseEntity<ApiResponse<GetArtworkFullDetailsResponse>> getArtworkFullDetails(@PathVariable Integer artworkId) {
-        return ResponseEntity.ok(ApiResponse.<GetArtworkFullDetailsResponse>builder()
-                .operationResultData(artworkService.getArtworkFullDetails(artworkId)).build());
     }
 
 }
