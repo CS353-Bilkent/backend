@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.backend.artbase.dtos.artwork.ArtworkSearchResponse;
+import com.backend.artbase.entities.ArtworkFilters;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,6 +72,28 @@ public class ArtworkService {
         List<Artwork> artworks = artworkDao.searchByName(searchKey);
         if(artworks.isEmpty()){
             artworks = artworkDao.searchByDescription(searchKey);
+        }
+        List<String> artistNames = artworkDao.getArtistNamesOfArtworks(artworks);
+        return ArtworkSearchResponse.builder().artworks(artworks).artistNames(artistNames).build();
+    }
+
+    public ArtworkSearchResponse filterSearchArtwork(String searchKey, ArtworkFilters artworkFilters){
+
+        if(artworkFilters.getMediumIds().isEmpty() && artworkFilters.getMaterialIds().isEmpty()
+        && artworkFilters.getRarityIds().isEmpty() && artworkFilters.getArtworkTypeIds().isEmpty()){
+            return searchArtwork(searchKey);
+        }
+
+        //TODO: Uncomment this
+        /*
+        if(searchKey.equals(""){
+            return filterArtwork(artworkFilters);
+        }
+         */
+
+        List<Artwork> artworks = artworkDao.filterSearchByName(searchKey, artworkFilters);
+        if(artworks.isEmpty()){
+            artworks = artworkDao.filterSearchByDescription(searchKey, artworkFilters);
         }
         List<String> artistNames = artworkDao.getArtistNamesOfArtworks(artworks);
         return ArtworkSearchResponse.builder().artworks(artworks).artistNames(artistNames).build();

@@ -1,23 +1,19 @@
 package com.backend.artbase.controllers;
 
 import com.backend.artbase.dtos.artwork.ArtworkSearchResponse;
+import com.backend.artbase.entities.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.artbase.dtos.artwork.GetArtworkDisplayDetailsResponse;
 import com.backend.artbase.dtos.artwork.UploadArtworkResponse;
-import com.backend.artbase.entities.ApiResponse;
-import com.backend.artbase.entities.Artwork;
 import com.backend.artbase.errors.ArtworkException;
 import com.backend.artbase.services.ArtworkService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -79,5 +75,20 @@ public class ArtworkController {
     public ResponseEntity<ApiResponse<ArtworkSearchResponse>> searchArtwork(@PathVariable String searchKey) {
         return ResponseEntity.ok(ApiResponse.<ArtworkSearchResponse>builder()
                 .operationResultData(artworkService.searchArtwork(searchKey)).build());
+    }
+
+    @GetMapping("/filter_search/{searchKey}")
+    public ResponseEntity<ApiResponse<ArtworkSearchResponse>> filterSearchArtwork(
+            @PathVariable String searchKey,
+            @RequestPart(name = "mediumIds", required = false) List<Integer> mediumIds,
+            @RequestPart(name = "materialIds", required = false) List<Integer> materialIds,
+            @RequestPart(name = "rarityIds", required = false) List<Integer> rarityIds,
+            @RequestPart(name = "artworkTypeIds", required = false) List<Integer> artworkTypeIds
+    )
+    {
+        ArtworkFilters filters = ArtworkFilters.builder().mediumIds(mediumIds).materialIds(materialIds)
+                .rarityIds(rarityIds).artworkTypeIds(artworkTypeIds).build();
+        return ResponseEntity.ok(ApiResponse.<ArtworkSearchResponse>builder()
+                .operationResultData(artworkService.filterSearchArtwork(searchKey, filters)).build());
     }
 }
