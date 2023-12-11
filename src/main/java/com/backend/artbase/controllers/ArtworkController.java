@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.backend.artbase.dtos.artwork.GetArtworkDisplayDetailsResponse;
+import com.backend.artbase.dtos.artwork.GetArtworkFullDetailsResponse;
 import com.backend.artbase.dtos.artwork.UploadArtworkResponse;
 import com.backend.artbase.dtos.auth.AuthResponse;
 import com.backend.artbase.entities.ApiResponse;
@@ -18,6 +20,9 @@ import com.backend.artbase.errors.ArtworkException;
 import com.backend.artbase.services.ArtworkService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequiredArgsConstructor
@@ -63,4 +68,17 @@ public class ArtworkController {
 
         return ResponseEntity.ok(ApiResponse.<UploadArtworkResponse>builder().operationResultData(null).build());
     }
+
+    @GetMapping("/{artworkId}")
+    public ResponseEntity<ApiResponse<GetArtworkDisplayDetailsResponse>> getArtworkDisplayDetails(@PathVariable Integer artworkId) {
+        return ResponseEntity.ok(ApiResponse.<GetArtworkDisplayDetailsResponse>builder()
+                .operationResultData(artworkService.getArtworkDisplayDetails(artworkId)).build());
+    }
+
+    @GetMapping("/{artworkId}")
+    public ResponseEntity<ApiResponse<GetArtworkFullDetailsResponse>> getArtworkFullDetails(@PathVariable Integer artworkId) {
+        return ResponseEntity.ok(ApiResponse.<GetArtworkFullDetailsResponse>builder()
+                .operationResultData(artworkService.getArtworkFullDetails(artworkId)).build());
+    }
+
 }

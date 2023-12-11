@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class FileDao {
 
-    public List<String> getFilenames(Integer artwork_id) {
+    public List<String> getArtworkFilenames(Integer artwork_id) {
         return null;
     }
 
