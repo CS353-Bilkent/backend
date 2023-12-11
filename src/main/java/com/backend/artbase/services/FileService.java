@@ -2,6 +2,7 @@ package com.backend.artbase.services;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Logger;
@@ -19,6 +20,7 @@ import com.backend.artbase.daos.FileDao;
 import com.backend.artbase.errors.RuntimeFileException;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
@@ -95,6 +97,43 @@ public class FileService {
             throw new RuntimeFileException("An error occurred while storing data to GCS", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         throw new RuntimeFileException("An error occurred while storing data to GCS", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    public byte[] getFile(String filename) {
+        return getFileAsByteArrayFromGCS(filename);
+    }
+
+    public List<byte[]> getArtworkFiles(Integer artworkId) {
+        List<String> artworkFilenames = fileDao.getArtworkFilenames(artworkId);
+
+        List<byte[]> fileList = new ArrayList<>();
+
+        for (String filename : artworkFilenames) {
+            byte[] file = getFileAsByteArrayFromGCS(filename);
+            fileList.add(file);
+        }
+        if (fileList.isEmpty()) {
+            throw new RuntimeFileException("Image files with given artwork id cannot be found", HttpStatus.NOT_FOUND);
+        }
+        return fileList;
+
+    }
+
+    private byte[] getFileAsByteArrayFromGCS(String filename) {
+        try {
+            InputStream inputStream = new ClassPathResource(keyFile).getInputStream();
+
+            StorageOptions options = StorageOptions.newBuilder().setProjectId(projectId)
+                    .setCredentials(GoogleCredentials.fromStream(inputStream)).build();
+
+            Storage storage = options.getService();
+            BlobId blobId = BlobId.of(bucketId, dirName + "/" + filename);
+            byte[] fileContent = storage.readAllBytes(blobId);
+
+            return fileContent;
+        } catch (IOException e) {
+            throw new RuntimeFileException("An error occurred while retrieving the file from GCS", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     private String checkFileExtension(String fileName) {
