@@ -1,5 +1,6 @@
 package com.backend.artbase.controllers;
 
+import com.backend.artbase.dtos.artwork.ArtworkSearchResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,4 +75,9 @@ public class ArtworkController {
                 .operationResultData(artworkService.getArtworkDisplayDetails(artworkId)).build());
     }
 
+    @GetMapping("/search/{searchKey}")
+    public ResponseEntity<ApiResponse<ArtworkSearchResponse>> searchArtwork(@PathVariable String searchKey) {
+        return ResponseEntity.ok(ApiResponse.<ArtworkSearchResponse>builder()
+                .operationResultData(artworkService.searchArtwork(searchKey)).build());
+    }
 }

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import com.backend.artbase.dtos.artwork.ArtworkSearchResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,4 +66,13 @@ public class ArtworkService {
         fileService.uploadFile(image, filename);
     }
 
+    public ArtworkSearchResponse searchArtwork(String searchKey){
+
+        List<Artwork> artworks = artworkDao.searchByName(searchKey);
+        if(artworks.isEmpty()){
+            artworks = artworkDao.searchByDescription(searchKey);
+        }
+        List<String> artistNames = artworkDao.getArtistNamesOfArtworks(artworks);
+        return ArtworkSearchResponse.builder().artworks(artworks).artistNames(artistNames).build();
+    }
 }
