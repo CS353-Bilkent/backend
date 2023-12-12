@@ -3,8 +3,15 @@ package com.backend.artbase.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.artbase.dtos.collection.CollectionDto;
+import com.backend.artbase.dtos.collection.CreateCollectionRequest;
+import com.backend.artbase.dtos.collection.GetCollectionsResponse;
+import com.backend.artbase.dtos.collection.SaveArtworksToCollectionRequest;
 import com.backend.artbase.entities.ApiResponse;
+import com.backend.artbase.entities.User;
+import com.backend.artbase.services.CollectionService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -20,29 +27,50 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/collection")
 public class CollectionController {
 
+    private final CollectionService collectionService;
+
+    @PostMapping("/create")
+    public ResponseEntity<ApiResponse<?>> createCollection(@RequestBody CreateCollectionRequest createRequest, HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+        collectionService.createCollection(user.getUserId(), createRequest.getArtworkCollectionName(),
+                createRequest.getArtworkCollectionDescription());
+        return ResponseEntity.ok(ApiResponse.builder().build());
+
+    }
+
     @GetMapping("/{collectionId}")
-    public ResponseEntity<ApiResponse<?>> getCollection(@PathVariable String param) {
-        return null;
+    public ResponseEntity<ApiResponse<CollectionDto>> getCollection(@PathVariable Integer collectionId) {
+        return ResponseEntity
+                .ok(ApiResponse.<CollectionDto>builder().operationResultData(collectionService.getCollection(collectionId)).build());
     }
 
     @PutMapping("/{collectionId}")
-    public ResponseEntity<ApiResponse<?>> saveArtworksToCollection(@PathVariable String param) {
-        return null;
+    public ResponseEntity<ApiResponse<?>> saveArtworksToCollection(@PathVariable String collectionId,
+            @RequestBody SaveArtworksToCollectionRequest collectionRequest, HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+        collectionService.saveArtworksToCollection(user.getUserId(), collectionRequest.getArtworks());
+        return ResponseEntity.ok(ApiResponse.builder().build());
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<GetCollectionsResponse>> getCollections() {
+        return ResponseEntity.ok(ApiResponse.<GetCollectionsResponse>builder()
+                .operationResultData(GetCollectionsResponse.builder().collections(collectionService.getCollections()).build()).build());
+    }
+
+    @GetMapping("/creator/{creatorId}")
+    public ResponseEntity<ApiResponse<GetCollectionsResponse>> getCollectionsByCreatorId(@PathVariable Integer creatorId) {
+        return ResponseEntity.ok(ApiResponse.<GetCollectionsResponse>builder()
+                .operationResultData(
+                        GetCollectionsResponse.builder().collections(collectionService.getCollectionsByCreatorId(creatorId)).build())
+                .build());
     }
 
     @PostMapping("/delete/{collectionId}")
-    public ResponseEntity<ApiResponse<?>> deleteCollection(@PathVariable String param) {
-        return null;
-    }
-
-    @GetMapping("/collections")
-    public ResponseEntity<ApiResponse<?>> getCollections(@RequestBody String param) {
-        return null;
-    }
-
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse<?>> createCollection(@RequestBody String dummy) {
-        return null;
+    public ResponseEntity<ApiResponse<?>> deleteCollection(@PathVariable String collectionId, HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+        collectionService.deleteCollection(user.getUserId(), collectionId);
+        return ResponseEntity.ok(ApiResponse.builder().build());
     }
 
 }
