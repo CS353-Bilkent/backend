@@ -48,7 +48,7 @@ public class CollectionController {
     public ResponseEntity<ApiResponse<?>> saveArtworksToCollection(@PathVariable String collectionId,
             @RequestBody SaveArtworksToCollectionRequest collectionRequest, HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
-        collectionService.saveArtworksToCollection(user.getUserId(), collectionRequest.getArtworks());
+        collectionService.saveArtworksToCollection(user.getUserId(), collectionRequest.getArtworks(), collectionId);
         return ResponseEntity.ok(ApiResponse.builder().build());
     }
 
