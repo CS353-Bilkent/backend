@@ -1,5 +1,7 @@
 package com.backend.artbase.daos;
 
+import java.util.Optional;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -36,7 +38,7 @@ public class UserDao {
         jdbcTemplate.update(sql, params);
     }
 
-    public User getUser(Integer user_id) {
+    public Optional<User> getUser(Integer user_id) {
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("user_id", user_id);
 
@@ -46,81 +48,28 @@ public class UserDao {
              "FROM USERS u WHERE u.user_id = :user_id";
         //@formatter:on
 
-        return jdbcTemplate.queryForObject(sql, params, (rs, rnum) -> {
-            ResultSetWrapper rsw = new ResultSetWrapper(rs);
-
-            //@formatter:off
-            return User.builder()
-            .userId(rsw.getInteger("user_id"))
-            .email(rsw.getString("email"))
-            .userName(rsw.getString("user_name"))
-            .userPassword(rsw.getString("user_password"))
-            .userType(UserType.fromCode(rsw.getString("user_type")))
-            .build();
-            //@formatter:on
-        });
-    }
-
-    public User getUserByUsername(String username) {
-        CustomSqlParameters params = CustomSqlParameters.create();
-        params.put("user_name", username);
-
-    //@formatter:off
-    String sql =
-        "SELECT u.user_id, u.user_name, u.email, u.user_password, u.user_type " +
-        "FROM USERS u WHERE u.user_name = :user_name";
-    //@formatter:on
-
         try {
-            return jdbcTemplate.queryForObject(sql, params, (rs, rnum) -> {
+
+            return Optional.of(jdbcTemplate.queryForObject(sql, params, (rs, rnum) -> {
                 ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            return User.builder()
+                return User.builder()
                 .userId(rsw.getInteger("user_id"))
                 .email(rsw.getString("email"))
                 .userName(rsw.getString("user_name"))
                 .userPassword(rsw.getString("user_password"))
                 .userType(UserType.fromCode(rsw.getString("user_type")))
                 .build();
-            //@formatter:on
-            });
-        } catch (EmptyResultDataAccessException ex) {
-            throw new UserRuntimeException("There is no user found with given username", HttpStatus.NOT_FOUND);
+                //@formatter:on
+
+            }));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
         }
     }
 
-    public User getUserByEmail(String email) {
-        CustomSqlParameters params = CustomSqlParameters.create();
-        params.put("email", email);
-
-        //@formatter:off
-            String sql =
-                "SELECT u.user_id, u.user_name, u.email, u.user_password, u.user_type " +
-                "FROM USERS u WHERE u.email = :email";
-            //@formatter:on
-
-        try {
-            return jdbcTemplate.queryForObject(sql, params, (rs, rnum) -> {
-                ResultSetWrapper rsw = new ResultSetWrapper(rs);
-
-                //@formatter:off
-                    return User.builder()
-                        .userId(rsw.getInteger("user_id"))
-                        .email(rsw.getString("email"))
-                        .userName(rsw.getString("user_name"))
-                        .userPassword(rsw.getString("user_password"))
-                        .userType(UserType.valueOf(rsw.getString("user_type")))
-                        .build();
-                    //@formatter:on
-            });
-        } catch (EmptyResultDataAccessException ex) {
-            throw new UserRuntimeException("There is no user found with the given email", HttpStatus.NOT_FOUND);
-        }
-
-    }
-
-    public User getUserByEmailOrUsername(String emailOrUsername) {
+    public Optional<User> getUserByEmailOrUsername(String emailOrUsername) {
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("emailOrUsername", emailOrUsername);
 
@@ -131,7 +80,7 @@ public class UserDao {
         //@formatter:on
 
         try {
-            return jdbcTemplate.queryForObject(sql, params, (rs, rnum) -> {
+            return Optional.of(jdbcTemplate.queryForObject(sql, params, (rs, rnum) -> {
                 ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
                 //@formatter:off
@@ -143,9 +92,9 @@ public class UserDao {
                     .userType(UserType.fromCode(rsw.getString("user_type")))
                     .build();
                 //@formatter:on
-            });
+            }));
         } catch (EmptyResultDataAccessException ex) {
-            throw new UserRuntimeException("There is no user found with the given email or username", HttpStatus.NOT_FOUND);
+            return Optional.empty();
         }
     }
 }
