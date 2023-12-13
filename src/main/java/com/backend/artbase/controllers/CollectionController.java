@@ -45,7 +45,7 @@ public class CollectionController {
     }
 
     @PutMapping("/{collectionId}")
-    public ResponseEntity<ApiResponse<?>> saveArtworksToCollection(@PathVariable String collectionId,
+    public ResponseEntity<ApiResponse<?>> saveArtworksToCollection(@PathVariable Integer collectionId,
             @RequestBody SaveArtworksToCollectionRequest collectionRequest, HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
         collectionService.saveArtworksToCollection(user.getUserId(), collectionRequest.getArtworks(), collectionId);
@@ -55,7 +55,7 @@ public class CollectionController {
     @GetMapping("/all")
     public ResponseEntity<ApiResponse<GetCollectionsResponse>> getCollections() {
         return ResponseEntity.ok(ApiResponse.<GetCollectionsResponse>builder()
-                .operationResultData(GetCollectionsResponse.builder().collections(collectionService.getCollections()).build()).build());
+                .operationResultData(GetCollectionsResponse.builder().collections(collectionService.getAllCollections()).build()).build());
     }
 
     @GetMapping("/creator/{creatorId}")
@@ -67,7 +67,7 @@ public class CollectionController {
     }
 
     @PostMapping("/delete/{collectionId}")
-    public ResponseEntity<ApiResponse<?>> deleteCollection(@PathVariable String collectionId, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<?>> deleteCollection(@PathVariable Integer collectionId, HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
         collectionService.deleteCollection(user.getUserId(), collectionId);
         return ResponseEntity.ok(ApiResponse.builder().build());
