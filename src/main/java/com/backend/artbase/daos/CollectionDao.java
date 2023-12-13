@@ -53,6 +53,30 @@ public class CollectionDao {
         }
     }
 
+    public List<ArtworkCollection> getAllCollections() {
+        CustomSqlParameters params = CustomSqlParameters.create();
+
+        //@formatter:off
+        String collectionSql =
+            "SELECT ac.artwork_collection_id, ac.artwork_collection_name, ac.artwork_collection_description, ac.creator_id " +
+            "FROM artwork_collection ac WHERE ac.artwork_collection_id = :collection_id";
+        //@formatter:on
+
+        // Retrieve collection information
+        return jdbcTemplate.query(collectionSql, params, (rs, rnum) -> {
+            ResultSetWrapper rsw = new ResultSetWrapper(rs);
+            //@formatter:off
+                return ArtworkCollection.builder()
+                    .collectionId(rsw.getInteger("artwork_collection_id"))
+                    .collectionName(rsw.getString("artwork_collection_name"))
+                    .collectionDescription(rsw.getString("artwork_collection_description"))
+                    .creatorId(rsw.getInteger("creator_id"))
+                    .build();
+                //@formatter:on
+        });
+
+    }
+
     public Integer getNextCollectionId() {
         String sql = "SELECT nextval('artwork_collection_artwork_collection_id_seq') AS next_collection_id";
 

@@ -31,9 +31,6 @@ public class CollectionService {
     private final ArtistService artistService;
 
     public Integer createCollection(Integer userId, String collectionName, String collectionDesc) {
-
-        // checks for user
-        User user = userService.getUserWithId(userId);
         Integer collectionId = collectionDao.getNextCollectionId();
 
         collectionDao.createCollection(ArtworkCollection.builder().collectionId(collectionId).collectionName(collectionName)
@@ -64,7 +61,6 @@ public class CollectionService {
     }
 
     public List<CollectionDto> getCollectionsByCreatorId(Integer creatorId) {
-        User user = userService.getUserWithId(creatorId);
 
         List<ArtworkCollection> collections = collectionDao.getCollectionsByCreatorId(creatorId);
 
@@ -75,18 +71,21 @@ public class CollectionService {
         return collectionDtos;
     }
 
-    public List<CollectionDto> getCollections() {
-        /*
-         * return collections, all or random ??
-         */
-        return null;
+    public List<CollectionDto> getAllCollections() {
+
+        List<ArtworkCollection> collections = collectionDao.getAllCollections();
+
+        List<CollectionDto> collectionDtos = new ArrayList<>();
+
+        collections.forEach(e -> collectionDtos.add(getCollectionDto(e)));
+
+        return collectionDtos;
     }
 
     public void deleteCollection(Integer userId, Integer collectionId) {
-        User user = userService.getUserWithId(userId);
         ArtworkCollection collection = getCollectionById(userId);
 
-        if (user.getUserId() != collection.getCreatorId()) {
+        if (userId != collection.getCreatorId()) {
             throw new CollectionRuntimeException("Only creator of a collection can make changes!", HttpStatus.FORBIDDEN);
         }
 
