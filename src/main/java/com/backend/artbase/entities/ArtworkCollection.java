@@ -11,12 +11,12 @@ import lombok.Setter;
 public class ArtworkCollection {
 
     @NonNull
-    private Integer artworkCollectionId;
+    private Integer collectionId;
 
     @NonNull
-    private String artworkCollectionName;
+    private String collectionName;
 
-    private String artworkCollectionDescription;
+    private String collectionDescription;
 
     @NonNull
     private Integer creatorId;

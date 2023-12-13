@@ -279,4 +279,33 @@ public class ArtworkDao {
         });
     }
 
+    public Boolean isArtworkValid(Integer artworkId) {
+        CustomSqlParameters params = CustomSqlParameters.create();
+        params.put("artwork_id", artworkId);
+
+        //@formatter:off
+        String sql =
+            "SELECT COUNT(*) AS count" +
+            "FROM artwork " +
+            "WHERE artwork_id = :artwork_id";
+        //@formatter:on
+
+        try {
+            Integer count = jdbcTemplate.queryForObject(sql, params, (rs, rnum) -> {
+                ResultSetWrapper rsw = new ResultSetWrapper(rs);
+                return rsw.getInteger("count");
+            });
+            return count != null && count > 0;
+        } catch (EmptyResultDataAccessException ex) {
+            return false;
+        }
+    }
+
+    // TO DO select * from artworks t where t.artwork_id in
+    // StrToTable(:artworks)
+    // to reduce db calls
+    public List<Artwork> getByArtworksIds(List<Integer> artworkId) {
+        return null;
+    }
+
 }
