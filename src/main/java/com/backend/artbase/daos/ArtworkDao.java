@@ -24,6 +24,7 @@ public class ArtworkDao {
 
     public void saveArtwork(Artwork artwork) {
         CustomSqlParameters params = CustomSqlParameters.create();
+        params.put("artwork_name", artwork.getArtworkName());
         params.put("user_id", artwork.getUserId());
         params.put("artist_id", artwork.getArtistId());
         params.put("artwork_id", artwork.getArtworkId());
@@ -43,7 +44,7 @@ public class ArtworkDao {
 
         //@formatter:off
         String sql =
-            "INSERT INTO artwork (user_id, artist_id, artwork_id, fixed_price, artwork_type_id, " +
+            "INSERT INTO artwork (artwork_name, user_id, artist_id, artwork_id, fixed_price, artwork_type_id, " +
             "time_period, rarity_id, medium_id, size_x, size_y, size_z, material_id, " +
             "artwork_location, art_movement_id, acquisition_way, artwork_description) " +
             "VALUES (:user_id, :artist_id, :artwork_id, :fixed_price, :artwork_type_id, " +
@@ -56,6 +57,7 @@ public class ArtworkDao {
 
     public void updateArtwork(Artwork artwork) {
         CustomSqlParameters params = CustomSqlParameters.create();
+        params.put("artwork_name", artwork.getArtworkName());
         params.put("fixed_price", artwork.getFixedPrice());
         params.put("artwork_type_id", artwork.getArtworkTypeId());
         params.put("time_period", artwork.getTimePeriod());
@@ -76,7 +78,7 @@ public class ArtworkDao {
         //@formatter:off
         String sql =
             "UPDATE artwork " +
-            "SET fixed_price = :fixed_price, artwork_type_id = :artwork_type_id, " +
+            "SET artwork_name = :artwork_name, fixed_price = :fixed_price, artwork_type_id = :artwork_type_id, " +
             "time_period = :time_period, rarity_id = :rarity_id, medium_id = :medium_id, " +
             "size_x = :size_x, size_y = :size_y, size_z = :size_z, material_id = :material_id, " +
             "artwork_location = :artwork_location, art_movement_id = :art_movement_id, " +
@@ -93,7 +95,7 @@ public class ArtworkDao {
 
         //@formatter:off
         String sql =
-            "SELECT a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
+            "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
             "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
             "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
             "a.artwork_description " +
@@ -106,6 +108,7 @@ public class ArtworkDao {
 
                 //@formatter:off
                 return Artwork.builder()
+                    .artworkName(rsw.getString("artwork_name"))
                     .userId(rsw.getInteger("user_id"))
                     .artistId(rsw.getInteger("artist_id"))
                     .artworkId(rsw.getInteger("artwork_id"))
@@ -136,7 +139,7 @@ public class ArtworkDao {
 
         //@formatter:off
         String sql =
-            "SELECT a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
+            "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
             "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
             "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
             "a.artwork_description " +
@@ -148,6 +151,7 @@ public class ArtworkDao {
 
             //@formatter:off
             return Artwork.builder()
+                .artworkName(rsw.getString("artwork_name"))
                 .userId(rsw.getInteger("user_id"))
                 .artistId(rsw.getInteger("artist_id"))
                 .artworkId(rsw.getInteger("artwork_id"))
@@ -179,7 +183,7 @@ public class ArtworkDao {
 
         //@formatter:off
         String sql =
-            "SELECT a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
+            "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
             "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
             "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
             "a.artwork_description " +
@@ -201,6 +205,7 @@ public class ArtworkDao {
 
             //@formatter:off
             return Artwork.builder()
+                .artworkName(rsw.getString("artwork_name"))
                 .userId(rsw.getInteger("user_id"))
                 .artistId(rsw.getInteger("artist_id"))
                 .artworkId(rsw.getInteger("artwork_id"))
@@ -232,7 +237,7 @@ public class ArtworkDao {
 
         //@formatter:off
         String sql =
-            "SELECT a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
+            "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
             "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
             "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
             "a.artwork_description " +
@@ -249,6 +254,7 @@ public class ArtworkDao {
 
             //@formatter:off
             return Artwork.builder()
+                .artworkName(rsw.getString("artwork_name"))
                 .userId(rsw.getInteger("user_id"))
                 .artistId(rsw.getInteger("artist_id"))
                 .artworkId(rsw.getInteger("artwork_id"))
@@ -289,8 +295,8 @@ public class ArtworkDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            //TODO: artworkName eklenmeli mi?
             return Artwork.builder()
+                    .artworkName(rsw.getString("artwork_name"))
                     .userId(rsw.getInteger("user_id"))
                     .artistId(rsw.getInteger("artist_id"))
                     .artworkId(rsw.getInteger("artwork_id"))
@@ -331,8 +337,8 @@ public class ArtworkDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            //TODO: artworkName eklenmeli mi?
             return Artwork.builder()
+                    .artworkName(rsw.getString("artwork_name"))
                     .userId(rsw.getInteger("user_id"))
                     .artistId(rsw.getInteger("artist_id"))
                     .artworkId(rsw.getInteger("artwork_id"))
@@ -388,8 +394,8 @@ public class ArtworkDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            //TODO: artworkName eklenmeli mi?
             return Artwork.builder()
+                    .artworkName(rsw.getString("artwork_name"))
                     .userId(rsw.getInteger("user_id"))
                     .artistId(rsw.getInteger("artist_id"))
                     .artworkId(rsw.getInteger("artwork_id"))
@@ -445,8 +451,8 @@ public class ArtworkDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            //TODO: artworkName eklenmeli mi?
             return Artwork.builder()
+                    .artworkName(rsw.getString("artwork_name"))
                     .userId(rsw.getInteger("user_id"))
                     .artistId(rsw.getInteger("artist_id"))
                     .artworkId(rsw.getInteger("artwork_id"))
