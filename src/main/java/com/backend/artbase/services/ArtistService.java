@@ -11,6 +11,7 @@ import com.backend.artbase.daos.UserDao;
 import com.backend.artbase.dtos.artist.CreateArtistRequest;
 import com.backend.artbase.entities.Artist;
 import com.backend.artbase.entities.User;
+import com.backend.artbase.entities.UserType;
 import com.backend.artbase.errors.ArtistRuntimeException;
 
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,8 @@ public class ArtistService {
         //@formatter:on
 
         artistDao.saveArtist(artist);
+
+        userService.changeUserType(user.getUserId(), UserType.ARTIST);
 
         return artistId;
     }
