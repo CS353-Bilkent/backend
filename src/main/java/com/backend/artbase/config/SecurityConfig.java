@@ -29,7 +29,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().configurationSource(request -> {
-            CorsConfiguration cors = new CorsConfiguration().applyPermitDefaultValues().setAllowedOriginPatterns(List.of("/*"));
+            CorsConfiguration cors = new CorsConfiguration().applyPermitDefaultValues().setAllowedOriginPatterns(List.of("*"));
 
             cors.addAllowedMethod("DELETE");
             return cors;
