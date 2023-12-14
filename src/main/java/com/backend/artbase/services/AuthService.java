@@ -1,5 +1,7 @@
 package com.backend.artbase.services;
 
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,7 +45,7 @@ public class AuthService {
 
         mailService.sendRegisterMail(user.getEmail());
 
-        String jwt = jwtTokenUtil.generateAccessToken(userDao.getUserByUsername(user.getUserName()));
+        String jwt = jwtTokenUtil.generateAccessToken(userDao.getUserByEmailOrUsername(user.getUserName()).get());
 
         return AuthResponse.builder().jwtToken(jwt).user_id(user.getUserId()).build();
     }
@@ -69,17 +71,19 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest loginRequest) {
 
-        User user = userDao.getUserByEmailOrUsername(loginRequest.getCreds());
+        Optional<User> optUser = userDao.getUserByEmailOrUsername(loginRequest.getCreds());
 
-        if (user == null) {
-            throw new UserRuntimeException("User not found", HttpStatus.NOT_FOUND);
+        if (optUser.isEmpty()) {
+            throw new UserRuntimeException("There is no user found with the given email or username", HttpStatus.NOT_FOUND);
         }
+
+        User user = optUser.get();
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getUserPassword())) {
             throw new UserRuntimeException("Password did not match", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        String jwt = jwtTokenUtil.generateAccessToken(userDao.getUserByUsername(user.getUserName()));
+        String jwt = jwtTokenUtil.generateAccessToken(user);
 
         return AuthResponse.builder().jwtToken(jwt).user_id(user.getUserId()).build();
     }

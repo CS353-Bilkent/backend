@@ -51,6 +51,15 @@ public class ArtworkService {
         return artwork.get();
     }
 
+    public List<Artwork> getArtworks(List<Integer> artworkId) {
+        List<Artwork> artwork = artworkDao.getByArtworksIds(artworkId);
+        if (artwork.isEmpty()) {
+            throw new ArtworkException("Artwork with given ID cannot be found", HttpStatus.NOT_FOUND);
+        }
+
+        return artwork;
+    }
+
     public GetArtworkDisplayDetailsResponse getArtworkDisplayDetails(Integer artworkId) {
         Artwork artwork = getArtwork(artworkId);
         List<byte[]> imageList = fileService.getArtworkFiles(artworkId);
@@ -64,6 +73,7 @@ public class ArtworkService {
         fileDao.saveArtworkFile(file_id, filename, artworkId);
         fileService.uploadFile(image, filename);
     }
+
 
     public ArtworkSearchResponse searchArtwork(String searchKey){
 
@@ -95,11 +105,18 @@ public class ArtworkService {
         }
         List<String> artistNames = artworkDao.getArtistNamesOfArtworks(artworks);
         return ArtworkSearchResponse.builder().artworks(artworks).artistNames(artistNames).build();
-        }
+    }
+  
     public ArtworkSearchResponse filterArtwork(ArtworkFilters artworkFilters) {
 
         List<Artwork> filteredArtworks = artworkDao.getArtworkWithFilters(artworkFilters);
         List<String> filteredArtistNames = artworkDao.getArtistNamesOfArtworks(filteredArtworks);
         return ArtworkSearchResponse.builder().artworks(filteredArtworks).artistNames(filteredArtistNames).build();
     }
+
+    public Boolean isArtworkValid(Integer artworkId) {
+        return artworkDao.isArtworkValid(artworkId);
+    }
+
+
 }

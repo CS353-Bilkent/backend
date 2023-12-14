@@ -515,14 +515,14 @@ public class ArtworkDao {
         });
     }
 
-    public ArtworkDto getArtworkDto(Integer artworkId){
 
+    public ArtworkDto getArtworkDto(Integer artworkId){
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("artwork_id", artworkId);
 
         //@formatter:off
         String sql =
-                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
+                   "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
                 "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
                 "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
                 "a.artwork_description, b.artist_name, b.gender, b.nationality, b.age, b.speciality" +
@@ -560,4 +560,35 @@ public class ArtworkDao {
             //@formatter:on
         });
     }
+
+    public Boolean isArtworkValid(Integer artworkId) {
+        CustomSqlParameters params = CustomSqlParameters.create();
+        params.put("artwork_id", artworkId);
+
+        //@formatter:off
+        String sql =
+            "SELECT COUNT(*) AS count" +
+            "FROM artwork " +
+            "WHERE artwork_id = :artwork_id";
+        //@formatter:on
+
+        try {
+            Integer count = jdbcTemplate.queryForObject(sql, params, (rs, rnum) -> {
+                ResultSetWrapper rsw = new ResultSetWrapper(rs);
+                return rsw.getInteger("count");
+            });
+            return count != null && count > 0;
+        } catch (EmptyResultDataAccessException ex) {
+            return false;
+        }
+    }
+
+    // TO DO select * from artworks t where t.artwork_id in
+    // StrToTable(:artworks)
+    // to reduce db calls
+    public List<Artwork> getByArtworksIds(List<Integer> artworkId) {
+        return null;
+    }
+
+
 }
