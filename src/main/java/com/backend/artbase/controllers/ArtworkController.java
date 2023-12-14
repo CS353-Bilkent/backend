@@ -1,6 +1,8 @@
 package com.backend.artbase.controllers;
 
 import com.backend.artbase.dtos.artwork.ArtworkSearchResponse;
+import com.backend.artbase.entities.ApiResponse;
+import com.backend.artbase.entities.Artwork;
 import com.backend.artbase.entities.ArtworkFilters;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -94,16 +96,12 @@ public class ArtworkController {
     }
 
     @GetMapping("/filter_search/{searchKey}")
-    public ResponseEntity<ApiResponse<ArtworkSearchResponse>> filterSearchArtwork(
-            @PathVariable String searchKey,
-            @RequestPart(name = "mediumIds", required = false) List<Integer> mediumIds,
-            @RequestPart(name = "materialIds", required = false) List<Integer> materialIds,
-            @RequestPart(name = "rarityIds", required = false) List<Integer> rarityIds,
-            @RequestPart(name = "artworkTypeIds", required = false) List<Integer> artworkTypeIds
-    )
-    {
-        ArtworkFilters filters = ArtworkFilters.builder().mediumIds(mediumIds).materialIds(materialIds)
-                .rarityIds(rarityIds).artworkTypeIds(artworkTypeIds).build();
+    public ResponseEntity<ApiResponse<ArtworkSearchResponse>> filterSearchArtwork(@PathVariable String searchKey,
+            @RequestBody GetFilteredArtworksRequest request) {
+
+        ArtworkFilters filters = ArtworkFilters.builder().mediumIds(request.getMediumId()).materialIds(request.getMaterialId())
+                .rarityIds(request.getRarityId()).artworkTypeIds(request.getArtworkTypeId()).build();
+
         return ResponseEntity.ok(ApiResponse.<ArtworkSearchResponse>builder()
                 .operationResultData(artworkService.filterSearchArtwork(searchKey, filters)).build());
     }

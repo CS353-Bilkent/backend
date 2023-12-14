@@ -2,8 +2,6 @@ package com.backend.artbase.dtos.artwork;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.RequestParam;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
