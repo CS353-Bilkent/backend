@@ -34,7 +34,7 @@ public class AuthService {
         isValidUsernameFormat(registerDto.getUsername());
         isValidEmail(registerDto.getEmail());
 
-        String encodedPassword = passwordEncoder.encode(registerDto.getUserPassword());
+        String encodedPassword = passwordEncoder.encode(registerDto.getPassword());
         User user = new User();
         user.setUserName(registerDto.getUsername());
         user.setEmail(registerDto.getEmail());
