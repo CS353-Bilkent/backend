@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.artbase.dtos.artwork.GetArtworkDisplayDetailsResponse;
+import com.backend.artbase.dtos.artwork.GetFilteredArtworksRequest;
 import com.backend.artbase.dtos.artwork.UploadArtworkResponse;
 import com.backend.artbase.entities.ApiResponse;
 import com.backend.artbase.entities.Artwork;
@@ -75,17 +76,22 @@ public class ArtworkController {
 
     @GetMapping("/search/{searchKey}")
     public ResponseEntity<ApiResponse<ArtworkSearchResponse>> searchArtwork(@PathVariable String searchKey) {
-        return ResponseEntity.ok(ApiResponse.<ArtworkSearchResponse>builder()
-                .operationResultData(artworkService.searchArtwork(searchKey)).build());
+        return ResponseEntity
+                .ok(ApiResponse.<ArtworkSearchResponse>builder().operationResultData(artworkService.searchArtwork(searchKey)).build());
     }
+
     @GetMapping("/filter")
-    public ResponseEntity<ApiResponse<ArtworkSearchResponse>> filterArtwork(
-            @RequestParam List<Integer> mediumId,
-            @RequestParam List<Integer> materialId,
-            @RequestParam List<Integer> rarityId,
-            @RequestParam List<Integer> artworkTypeId
-    ) {
-        ArtworkFilters artworkFilters = ArtworkFilters.builder().mediumIds(mediumId).materialIds(materialId).rarityIds(rarityId).artworkTypeIds(artworkTypeId).build();
-        return ResponseEntity.ok(ApiResponse.<ArtworkSearchResponse>builder().operationResultData(artworkService.filterArtwork(artworkFilters)).build());
+    public ResponseEntity<ApiResponse<ArtworkSearchResponse>> filterArtwork(@RequestBody GetFilteredArtworksRequest request) {
+        //@formatter:off
+        return ResponseEntity.ok(ApiResponse.<ArtworkSearchResponse>builder()
+                .operationResultData(artworkService
+                        .filterArtwork(ArtworkFilters.builder()
+                        .mediumIds(request.getMediumId())
+                        .materialIds(request.getMaterialId())
+                        .rarityIds(request.getRarityId())
+                        .artworkTypeIds(request.getArtworkTypeId())
+                        .build()))
+                .build());
+        //@formatter:on
     }
 }
