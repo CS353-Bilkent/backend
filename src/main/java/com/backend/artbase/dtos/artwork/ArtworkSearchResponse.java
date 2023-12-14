@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 public class ArtworkSearchResponse {
 
+    //TODO: bu iki list yerine direkt ArtworkDto listesi dönmek daha mantıklı olabilir
     private List<Artwork> artworks;
     private List<String> artistNames;
 }

@@ -4,6 +4,7 @@ import com.backend.artbase.dtos.artwork.ArtworkSearchResponse;
 import com.backend.artbase.entities.ApiResponse;
 import com.backend.artbase.entities.Artwork;
 import com.backend.artbase.entities.ArtworkFilters;
+import com.backend.artbase.entities.ArtworkStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,22 +45,25 @@ public class ArtworkController {
             @RequestPart(name = "artworkLocation", required = false) String artworkLocation,
             @RequestPart(name = "artMovementId") Integer artMovementId,
             @RequestPart(name = "acquisitionWay") String acquisitionWay,
-            @RequestPart(name = "artworkDescription", required = false) String artworkDescription
+            @RequestPart(name = "artworkDescription", required = false) String artworkDescription,
+            @RequestPart(name = "artworkStatus", required = false) String artworkStatus
     ) {
     //@formatter:on
         try {
 
+            ArtworkStatus status = ArtworkStatus.fromCode(artworkStatus);
             Artwork artwork = Artwork.builder().userId(userId).artistId(artistId).artworkName(artworkName).fixedPrice(fixedPrice)
                     .artworkTypeId(artworkTypeId).timePeriod(timePeriod).rarityId(rarityId).mediumId(mediumId).sizeX(sizeX).sizeY(sizeY)
                     .sizeZ(sizeZ).materialId(materialId).artworkLocation(artworkLocation).artMovementId(artMovementId)
-                    .acquisitionWay(acquisitionWay).artworkDescription(artworkDescription).build();
+                    .acquisitionWay(acquisitionWay).artworkDescription(artworkDescription).artworkStatus(status).build();
 
             return ResponseEntity.ok(
                     ApiResponse.<UploadArtworkResponse>builder().operationResultData(artworkService.saveArtwork(artwork, image)).build());
         } catch (NullPointerException e) {
             throw new ArtworkException("Required information must be provided", HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            throw new ArtworkException("Invalid artwork status code", HttpStatus.BAD_REQUEST);
         }
-
     }
 
     @PostMapping("/addImage/{artworkId}")

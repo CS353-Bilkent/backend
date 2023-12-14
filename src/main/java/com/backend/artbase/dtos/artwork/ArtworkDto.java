@@ -27,6 +27,7 @@ public class ArtworkDto {
     private Integer artMovementId;
     private String acquisitionWay;
     private String artworkDescription;
+    private String artworkStatus;
 
     //Artist attributes (userId and artistId omitted)
     private String artistName;

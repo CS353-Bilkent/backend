@@ -77,6 +77,7 @@ public class ArtworkService {
 
     public ArtworkSearchResponse searchArtwork(String searchKey){
 
+        //TODO: ArtworkSearchResponse'taki TODO yapılırsa getArtistNamesOfArtworks kullanmak yerine artworkDao'dan direkt artworkDto arrayi döndürebiliriz
         List<Artwork> artworks = artworkDao.searchByName(searchKey);
         if(artworks.isEmpty()){
             artworks = artworkDao.searchByDescription(searchKey);
@@ -87,6 +88,7 @@ public class ArtworkService {
 
     public ArtworkSearchResponse filterSearchArtwork(String searchKey, ArtworkFilters artworkFilters){
 
+        //TODO: ArtworkSearchResponse'taki TODO yapılırsa getArtistNamesOfArtworks kullanmak yerine artworkDao'dan direkt artworkDto arrayi döndürebiliriz
         if(artworkFilters.getMediumIds().isEmpty() && artworkFilters.getMaterialIds().isEmpty()
         && artworkFilters.getRarityIds().isEmpty() && artworkFilters.getArtworkTypeIds().isEmpty()){
             return searchArtwork(searchKey);
@@ -109,6 +111,7 @@ public class ArtworkService {
   
     public ArtworkSearchResponse filterArtwork(ArtworkFilters artworkFilters) {
 
+        //TODO: ArtworkSearchResponse'taki TODO yapılırsa getArtistNamesOfArtworks kullanmak yerine artworkDao'dan direkt artworkDto arrayi döndürebiliriz
         List<Artwork> filteredArtworks = artworkDao.getArtworkWithFilters(artworkFilters);
         List<String> filteredArtistNames = artworkDao.getArtistNamesOfArtworks(filteredArtworks);
         return ArtworkSearchResponse.builder().artworks(filteredArtworks).artistNames(filteredArtistNames).build();
