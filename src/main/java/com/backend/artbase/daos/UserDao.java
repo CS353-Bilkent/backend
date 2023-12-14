@@ -97,4 +97,19 @@ public class UserDao {
             return Optional.empty();
         }
     }
+
+    public void changeUserType(Integer userId, UserType userType) {
+        CustomSqlParameters params = CustomSqlParameters.create();
+        params.put("user_id", userId);
+        params.put("user_type", userType.getCode());
+
+        //@formatter:off
+        String sql =
+            "UPDATE USERS " +
+            "SET user_type = :user_type " +
+            "WHERE user_id = :user_id";
+        //@formatter:on
+
+        jdbcTemplate.update(sql, params);
+    }
 }

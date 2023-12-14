@@ -117,4 +117,15 @@ public class ArtistDao {
             return Optional.empty();
         }
     }
+
+    public Integer getNextArtistId() {
+        String sql = "SELECT nextval('artist_artist_id_seq') AS next_artist_id";
+
+        CustomSqlParameters params = CustomSqlParameters.create();
+
+        return jdbcTemplate.queryForObject(sql, params, (rs, rnum) -> {
+            ResultSetWrapper rsw = new ResultSetWrapper(rs);
+            return rsw.getInteger("next_artist_id");
+        });
+    }
 }

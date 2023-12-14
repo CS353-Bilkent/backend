@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.backend.artbase.daos.UserDao;
 import com.backend.artbase.entities.User;
+import com.backend.artbase.entities.UserType;
 import com.backend.artbase.errors.UserRuntimeException;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,10 @@ public class UserService {
         }
 
         return optUser.get();
+    }
+
+    public void changeUserType(Integer userId, UserType userType) {
+        userDao.changeUserType(userId, userType);
     }
 
 }
