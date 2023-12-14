@@ -1,6 +1,5 @@
 package com.backend.artbase.services;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.backend.artbase.daos.ArtworkDao;
 import com.backend.artbase.daos.FileDao;
 import com.backend.artbase.dtos.artwork.GetArtworkDisplayDetailsResponse;
-import com.backend.artbase.dtos.artwork.GetArtworkFullDetailsResponse;
 import com.backend.artbase.dtos.artwork.UploadArtworkResponse;
 import com.backend.artbase.entities.Artwork;
 import com.backend.artbase.errors.ArtworkException;
@@ -97,5 +95,11 @@ public class ArtworkService {
         }
         List<String> artistNames = artworkDao.getArtistNamesOfArtworks(artworks);
         return ArtworkSearchResponse.builder().artworks(artworks).artistNames(artistNames).build();
+        }
+    public ArtworkSearchResponse filterArtwork(ArtworkFilters artworkFilters) {
+
+        List<Artwork> filteredArtworks = artworkDao.getArtworkWithFilters(artworkFilters);
+        List<String> filteredArtistNames = artworkDao.getArtistNamesOfArtworks(filteredArtworks);
+        return ArtworkSearchResponse.builder().artworks(filteredArtworks).artistNames(filteredArtistNames).build();
     }
 }
