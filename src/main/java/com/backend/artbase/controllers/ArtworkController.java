@@ -1,22 +1,22 @@
 package com.backend.artbase.controllers;
 
+import com.backend.artbase.dtos.artwork.ArtworkSearchResponse;
+import com.backend.artbase.entities.ApiResponse;
+import com.backend.artbase.entities.Artwork;
+import com.backend.artbase.entities.ArtworkFilters;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.artbase.dtos.artwork.GetArtworkDisplayDetailsResponse;
+import com.backend.artbase.dtos.artwork.GetFilteredArtworksRequest;
 import com.backend.artbase.dtos.artwork.UploadArtworkResponse;
-import com.backend.artbase.entities.ApiResponse;
-import com.backend.artbase.entities.Artwork;
 import com.backend.artbase.errors.ArtworkException;
 import com.backend.artbase.services.ArtworkService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -74,4 +74,35 @@ public class ArtworkController {
                 .operationResultData(artworkService.getArtworkDisplayDetails(artworkId)).build());
     }
 
+    @GetMapping("/search/{searchKey}")
+    public ResponseEntity<ApiResponse<ArtworkSearchResponse>> searchArtwork(@PathVariable String searchKey) {
+        return ResponseEntity
+                .ok(ApiResponse.<ArtworkSearchResponse>builder().operationResultData(artworkService.searchArtwork(searchKey)).build());
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<ApiResponse<ArtworkSearchResponse>> filterArtwork(@RequestBody GetFilteredArtworksRequest request) {
+        //@formatter:off
+        return ResponseEntity.ok(ApiResponse.<ArtworkSearchResponse>builder()
+                .operationResultData(artworkService
+                        .filterArtwork(ArtworkFilters.builder()
+                        .mediumIds(request.getMediumId())
+                        .materialIds(request.getMaterialId())
+                        .rarityIds(request.getRarityId())
+                        .artworkTypeIds(request.getArtworkTypeId())
+                        .build()))
+                .build());
+        //@formatter:on
+    }
+
+    @GetMapping("/filter_search/{searchKey}")
+    public ResponseEntity<ApiResponse<ArtworkSearchResponse>> filterSearchArtwork(@PathVariable String searchKey,
+            @RequestBody GetFilteredArtworksRequest request) {
+
+        ArtworkFilters filters = ArtworkFilters.builder().mediumIds(request.getMediumId()).materialIds(request.getMaterialId())
+                .rarityIds(request.getRarityId()).artworkTypeIds(request.getArtworkTypeId()).build();
+
+        return ResponseEntity.ok(ApiResponse.<ArtworkSearchResponse>builder()
+                .operationResultData(artworkService.filterSearchArtwork(searchKey, filters)).build());
+    }
 }
