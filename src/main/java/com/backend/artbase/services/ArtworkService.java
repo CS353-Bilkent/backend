@@ -1,9 +1,10 @@
 package com.backend.artbase.services;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import com.backend.artbase.dtos.artwork.ArtworkSearchResponse;
+import com.backend.artbase.entities.ArtworkFilters;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.backend.artbase.daos.ArtworkDao;
 import com.backend.artbase.daos.FileDao;
 import com.backend.artbase.dtos.artwork.GetArtworkDisplayDetailsResponse;
-import com.backend.artbase.dtos.artwork.GetArtworkFullDetailsResponse;
 import com.backend.artbase.dtos.artwork.UploadArtworkResponse;
 import com.backend.artbase.entities.Artwork;
 import com.backend.artbase.errors.ArtworkException;
@@ -74,8 +74,49 @@ public class ArtworkService {
         fileService.uploadFile(image, filename);
     }
 
+
+    public ArtworkSearchResponse searchArtwork(String searchKey){
+
+        List<Artwork> artworks = artworkDao.searchByName(searchKey);
+        if(artworks.isEmpty()){
+            artworks = artworkDao.searchByDescription(searchKey);
+        }
+        List<String> artistNames = artworkDao.getArtistNamesOfArtworks(artworks);
+        return ArtworkSearchResponse.builder().artworks(artworks).artistNames(artistNames).build();
+    }
+
+    public ArtworkSearchResponse filterSearchArtwork(String searchKey, ArtworkFilters artworkFilters){
+
+        if(artworkFilters.getMediumIds().isEmpty() && artworkFilters.getMaterialIds().isEmpty()
+        && artworkFilters.getRarityIds().isEmpty() && artworkFilters.getArtworkTypeIds().isEmpty()){
+            return searchArtwork(searchKey);
+        }
+
+        //TODO: Uncomment this
+        /*
+        if(searchKey.equals(""){
+            return filterArtwork(artworkFilters);
+        }
+         */
+
+        List<Artwork> artworks = artworkDao.filterSearchByName(searchKey, artworkFilters);
+        if(artworks.isEmpty()){
+            artworks = artworkDao.filterSearchByDescription(searchKey, artworkFilters);
+        }
+        List<String> artistNames = artworkDao.getArtistNamesOfArtworks(artworks);
+        return ArtworkSearchResponse.builder().artworks(artworks).artistNames(artistNames).build();
+    }
+  
+    public ArtworkSearchResponse filterArtwork(ArtworkFilters artworkFilters) {
+
+        List<Artwork> filteredArtworks = artworkDao.getArtworkWithFilters(artworkFilters);
+        List<String> filteredArtistNames = artworkDao.getArtistNamesOfArtworks(filteredArtworks);
+        return ArtworkSearchResponse.builder().artworks(filteredArtworks).artistNames(filteredArtistNames).build();
+    }
+
     public Boolean isArtworkValid(Integer artworkId) {
         return artworkDao.isArtworkValid(artworkId);
     }
+
 
 }
