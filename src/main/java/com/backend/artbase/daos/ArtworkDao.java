@@ -48,7 +48,7 @@ public class ArtworkDao {
             "INSERT INTO artwork (artwork_name, user_id, artist_id, artwork_id, fixed_price, artwork_type_id, " +
             "time_period, rarity_id, medium_id, size_x, size_y, size_z, material_id, " +
             "artwork_location, art_movement_id, acquisition_way, artwork_description) " +
-            "VALUES (:user_id, :artist_id, :artwork_id, :fixed_price, :artwork_type_id, " +
+            "VALUES (:artwork_name,:user_id, :artist_id, :artwork_id, :fixed_price, :artwork_type_id, " +
             ":time_period, :rarity_id, :medium_id, :size_x, :size_y, :size_z, :material_id, " +
             ":artwork_location, :art_movement_id, :acquisition_way, :artwork_description)";
         //@formatter:on
@@ -277,7 +277,7 @@ public class ArtworkDao {
         });
     }
 
-    public List<Artwork> searchByName(String searchKey){
+    public List<Artwork> searchByName(String searchKey) {
 
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("search_key", searchKey);
@@ -319,7 +319,7 @@ public class ArtworkDao {
         });
     }
 
-    public List<Artwork> searchByDescription(String searchKey){
+    public List<Artwork> searchByDescription(String searchKey) {
 
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("search_key", searchKey);
@@ -361,7 +361,7 @@ public class ArtworkDao {
         });
     }
 
-    public List<Artwork> filterSearchByName(String searchKey, ArtworkFilters artworkFilters){
+    public List<Artwork> filterSearchByName(String searchKey, ArtworkFilters artworkFilters) {
 
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("search_key", searchKey);
@@ -418,7 +418,7 @@ public class ArtworkDao {
         });
     }
 
-    public List<Artwork> filterSearchByDescription(String searchKey, ArtworkFilters artworkFilters){
+    public List<Artwork> filterSearchByDescription(String searchKey, ArtworkFilters artworkFilters) {
 
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("search_key", searchKey);
@@ -475,14 +475,14 @@ public class ArtworkDao {
         });
     }
 
-    public List<String> getArtistNamesOfArtworks(List<Artwork> artworks){
+    public List<String> getArtistNamesOfArtworks(List<Artwork> artworks) {
 
-        if(artworks.isEmpty()){
+        if (artworks.isEmpty()) {
             return null;
         }
 
         List<String> artistNames = new ArrayList<>();
-        for(int i = 0; i < artworks.size(); i++){
+        for (int i = 0; i < artworks.size(); i++) {
 
             CustomSqlParameters params = CustomSqlParameters.create();
             params.put("artist_id", artworks.get(i).getArtistId());
@@ -515,8 +515,7 @@ public class ArtworkDao {
         });
     }
 
-
-    public ArtworkDto getArtworkDto(Integer artworkId){
+    public ArtworkDto getArtworkDto(Integer artworkId) {
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("artwork_id", artworkId);
 
@@ -589,6 +588,5 @@ public class ArtworkDao {
     public List<Artwork> getByArtworksIds(List<Integer> artworkId) {
         return null;
     }
-
 
 }

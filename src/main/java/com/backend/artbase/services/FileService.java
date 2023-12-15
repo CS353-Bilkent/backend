@@ -79,22 +79,6 @@ public class FileService {
         return getFileAsByteArrayFromGCS(filename);
     }
 
-    public List<byte[]> getArtworkFiles(Integer artworkId) {
-        List<String> artworkFilenames = fileDao.getArtworkFilenames(artworkId);
-
-        List<byte[]> fileList = new ArrayList<>();
-
-        for (String filename : artworkFilenames) {
-            byte[] file = getFileAsByteArrayFromGCS(filename);
-            fileList.add(file);
-        }
-        if (fileList.isEmpty()) {
-            throw new RuntimeFileException("Image files with given artwork id cannot be found", HttpStatus.NOT_FOUND);
-        }
-        return fileList;
-
-    }
-
     private byte[] getFileAsByteArrayFromGCS(String filename) {
         try {
             InputStream inputStream = new ClassPathResource(keyFile).getInputStream();
@@ -112,7 +96,7 @@ public class FileService {
         }
     }
 
-    private String checkFileExtension(String fileName) {
+    public String checkFileExtension(String fileName) {
         if (fileName != null && fileName.contains(".")) {
             String[] extensionList = { ".png", ".jpeg", ".jpg" };
 
