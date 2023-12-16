@@ -59,7 +59,6 @@ public class ArtworkController {
         //@formatter:on
         try {
 
-            ArtworkStatus status = ArtworkStatus.fromCode(artworkStatus);
             Artwork artwork = Artwork.builder().userId(userId).artistId(artistId).artworkName(artworkName).fixedPrice(fixedPrice)
                     .artworkTypeId(artworkTypeId).timePeriod(timePeriod).rarityId(rarityId).mediumId(mediumId).sizeX(sizeX).sizeY(sizeY)
                     .sizeZ(sizeZ).materialId(materialId).artworkLocation(artworkLocation).artMovementId(artMovementId)
@@ -87,14 +86,14 @@ public class ArtworkController {
                 .operationResultData(artworkService.getArtworkDisplayDetails(artworkId)).build());
     }
 
-    //TODO: bu endpointe gerek kalmamış olabilir
+    // TODO: bu endpointe gerek kalmamış olabilir
     @GetMapping("/search/{searchKey}")
     public ResponseEntity<ApiResponse<ArtworkSearchResponse>> searchArtwork(@PathVariable String searchKey) {
         return ResponseEntity
                 .ok(ApiResponse.<ArtworkSearchResponse>builder().operationResultData(artworkService.searchArtwork(searchKey)).build());
     }
 
-    //TODO: bu endpointe gerek kalmamış olabilir
+    // TODO: bu endpointe gerek kalmamış olabilir
     @GetMapping("/filter")
     public ResponseEntity<ApiResponse<ArtworkSearchResponse>> filterArtwork(@RequestBody GetFilteredArtworksRequest request) {
         //@formatter:off
@@ -145,7 +144,7 @@ public class ArtworkController {
 
     @GetMapping("/filter_search/{searchKey}")
     public ResponseEntity<ApiResponse<ArtworkSearchResponse>> filterSearchArtwork(@PathVariable String searchKey,
-                                                                                  @RequestBody GetFilteredArtworksRequest request) {
+            @RequestBody GetFilteredArtworksRequest request) {
 
         ArtworkFilters filters = ArtworkFilters.builder().mediumIds(request.getMediumId()).materialIds(request.getMaterialId())
                 .rarityIds(request.getRarityId()).artworkTypeIds(request.getArtworkTypeId()).build();
