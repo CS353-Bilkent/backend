@@ -118,5 +118,14 @@ public class ArtworkService {
         return artworkDao.isArtworkValid(artworkId);
     }
 
+    public List<Artwork> getArtworksOfArtist(Integer artistId) {
+        return artworkDao.getArtworksOfArtist(artistId);
+    }
 
+    public void updateArtworkDescription(Integer artworkId, String newDescription) {
+        Artwork artwork = artworkDao.getByArtworkId(artworkId)
+                .orElseThrow(() -> new RuntimeException("Artwork not found"));
+        artwork.setArtworkDescription(newDescription);
+        artworkDao.updateArtwork(artwork);
+    }
 }

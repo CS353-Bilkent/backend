@@ -105,4 +105,16 @@ public class ArtworkController {
         return ResponseEntity.ok(ApiResponse.<ArtworkSearchResponse>builder()
                 .operationResultData(artworkService.filterSearchArtwork(searchKey, filters)).build());
     }
+
+    @GetMapping
+    public ResponseEntity<?> getArtworks(@RequestParam Integer artistId) {
+        return ResponseEntity.ok(artworkService.getArtworksOfArtist(artistId));
+    }
+
+    @PutMapping("/{artworkId}")
+    public ResponseEntity<?> updateArtworkDescription(@PathVariable Integer artworkId, @RequestBody String newDescription) {
+        artworkService.updateArtworkDescription(artworkId, newDescription);
+        return ResponseEntity.ok().build();
+    }
+    
 }
