@@ -26,8 +26,8 @@ public class GalleryDao {
         //@formatter:off
         String sql = 
             "SELECT art_gallery_id, user_id, art_gallery_name, art_gallery_location " 
-            + "   FROM art_gallery " 
-            + " WHERE art_gallery_id = :art_gallery_id";
+            + "FROM art_gallery "
+            + "WHERE art_gallery_id = :art_gallery_id";
         //@formatter:on
 
         try {

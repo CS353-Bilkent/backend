@@ -1,6 +1,5 @@
 package com.backend.artbase.dtos.artwork;
 
-import com.backend.artbase.entities.Artwork;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +11,5 @@ import java.util.List;
 @Builder
 public class ArtworkSearchResponse {
 
-    private List<Artwork> artworks;
-    private List<String> artistNames;
+    private List<ArtworkDto> artworkDtos;
 }

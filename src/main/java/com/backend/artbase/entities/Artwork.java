@@ -53,5 +53,5 @@ public class Artwork {
     private String acquisitionWay;
 
     private String artworkDescription;
-
+    private ArtworkStatus artworkStatus;
 }

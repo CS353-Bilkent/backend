@@ -12,6 +12,6 @@ import lombok.Setter;
 @lombok.Builder
 public class GetArtworkFullDetailsResponse {
 
-    private Artwork artwork;
+    private ArtworkDto artworkDto;
     private List<byte[]> displayImages;
 }

@@ -1,18 +1,16 @@
 package com.backend.artbase.services;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import com.backend.artbase.dtos.artwork.ArtworkDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.backend.artbase.daos.ArtworkDao;
 import com.backend.artbase.daos.CollectionDao;
 import com.backend.artbase.dtos.collection.CollectionDto;
-import com.backend.artbase.entities.Artwork;
 import com.backend.artbase.entities.ArtworkCollection;
 import com.backend.artbase.entities.User;
 import com.backend.artbase.errors.ArtworkException;
@@ -103,18 +101,16 @@ public class CollectionService {
         return collection.get();
     }
 
-    // adding artwork dtos to collection
     private CollectionDto getCollectionDto(ArtworkCollection collection) {
 
-        // TO DO: convert to artwork dto
-        List<Artwork> artworks = new ArrayList<>();
+        List<ArtworkDto> artworkDtos = new ArrayList<>();
 
-        List<Integer> artoworkIds = collectionDao.getArtworksFromCollection(collection.getCollectionId());
-        artoworkIds.forEach(e -> {
-            artworks.add(artworkService.getArtwork(e));
+        List<Integer> artworkIds = collectionDao.getArtworksFromCollection(collection.getCollectionId());
+        artworkIds.forEach(e -> {
+            artworkDtos.add(artworkService.getArtwork(e));
         });
 
-        return CollectionDto.builder().artworks(artworks).collection(collection).build();
+        return CollectionDto.builder().artworkDtos(artworkDtos).collection(collection).build();
     }
 
 }

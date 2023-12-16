@@ -1,5 +1,6 @@
 package com.backend.artbase.dtos.artwork;
 
+import com.backend.artbase.entities.ArtworkStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,7 @@ public class ArtworkDto {
     private Integer artMovementId;
     private String acquisitionWay;
     private String artworkDescription;
+    private ArtworkStatus artworkStatus;
 
     //Artist attributes (userId and artistId omitted)
     private String artistName;

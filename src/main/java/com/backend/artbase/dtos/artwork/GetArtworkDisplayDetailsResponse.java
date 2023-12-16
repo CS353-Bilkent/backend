@@ -1,7 +1,5 @@
 package com.backend.artbase.dtos.artwork;
 
-import com.backend.artbase.entities.Artwork;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +8,6 @@ import lombok.Setter;
 @lombok.Builder
 public class GetArtworkDisplayDetailsResponse {
 
-    private Artwork artwork;
+    private ArtworkDto artworkDto;
     private byte[] displayImage;
 }
