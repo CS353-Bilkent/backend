@@ -144,4 +144,9 @@ public final class ResultSetWrapper {
         return isNull(columnLabel) ? Collections.emptyList() : Arrays.asList(resultSet.getString(columnLabel).split(splitRegex));
     }
 
+    public Character getCharacter(String columnName) throws SQLException {
+        String result = resultSet.getString(columnName);
+        return (result != null && !result.isEmpty()) ? result.charAt(0) : null;
+    }
+
 }
