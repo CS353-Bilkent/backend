@@ -35,7 +35,7 @@ public class ArtworkService {
         artworkDao.saveArtwork(artwork);
 
         Integer file_id = fileDao.getNextFileId();
-        String filename = artworkId.toString() + "_" + file_id.toString();
+        String filename = artworkId.toString() + "_" + file_id.toString() + fileService.checkFileExtension(image.getOriginalFilename());
         fileDao.saveArtworkFile(file_id, filename, artworkId);
         fileService.uploadFile(image, filename);
 
@@ -62,9 +62,10 @@ public class ArtworkService {
 
     public GetArtworkDisplayDetailsResponse getArtworkDisplayDetails(Integer artworkId) {
         Artwork artwork = getArtwork(artworkId);
-        List<byte[]> imageList = fileService.getArtworkFiles(artworkId);
 
-        return GetArtworkDisplayDetailsResponse.builder().artwork(artwork).displayImage(imageList.get(0)).build();
+        List<String> filenames = fileDao.getArtworkFilenames(artworkId);
+
+        return GetArtworkDisplayDetailsResponse.builder().artwork(artwork).displayImage(fileService.getFile(filenames.get(0))).build();
     }
 
     public void addImageToArtwork(MultipartFile image, Integer artworkId) {
@@ -74,39 +75,36 @@ public class ArtworkService {
         fileService.uploadFile(image, filename);
     }
 
-
-    public ArtworkSearchResponse searchArtwork(String searchKey){
+    public ArtworkSearchResponse searchArtwork(String searchKey) {
 
         List<Artwork> artworks = artworkDao.searchByName(searchKey);
-        if(artworks.isEmpty()){
+        if (artworks.isEmpty()) {
             artworks = artworkDao.searchByDescription(searchKey);
         }
         List<String> artistNames = artworkDao.getArtistNamesOfArtworks(artworks);
         return ArtworkSearchResponse.builder().artworks(artworks).artistNames(artistNames).build();
     }
 
-    public ArtworkSearchResponse filterSearchArtwork(String searchKey, ArtworkFilters artworkFilters){
+    public ArtworkSearchResponse filterSearchArtwork(String searchKey, ArtworkFilters artworkFilters) {
 
-        if(artworkFilters.getMediumIds().isEmpty() && artworkFilters.getMaterialIds().isEmpty()
-        && artworkFilters.getRarityIds().isEmpty() && artworkFilters.getArtworkTypeIds().isEmpty()){
+        if (artworkFilters.getMediumIds().isEmpty() && artworkFilters.getMaterialIds().isEmpty() && artworkFilters.getRarityIds().isEmpty()
+                && artworkFilters.getArtworkTypeIds().isEmpty()) {
             return searchArtwork(searchKey);
         }
 
-        //TODO: Uncomment this
+        // TODO: Uncomment this
         /*
-        if(searchKey.equals(""){
-            return filterArtwork(artworkFilters);
-        }
+         * if(searchKey.equals(""){ return filterArtwork(artworkFilters); }
          */
 
         List<Artwork> artworks = artworkDao.filterSearchByName(searchKey, artworkFilters);
-        if(artworks.isEmpty()){
+        if (artworks.isEmpty()) {
             artworks = artworkDao.filterSearchByDescription(searchKey, artworkFilters);
         }
         List<String> artistNames = artworkDao.getArtistNamesOfArtworks(artworks);
         return ArtworkSearchResponse.builder().artworks(artworks).artistNames(artistNames).build();
     }
-  
+
     public ArtworkSearchResponse filterArtwork(ArtworkFilters artworkFilters) {
 
         List<Artwork> filteredArtworks = artworkDao.getArtworkWithFilters(artworkFilters);
@@ -128,4 +126,5 @@ public class ArtworkService {
         artwork.setArtworkDescription(newDescription);
         artworkDao.updateArtwork(artwork);
     }
+
 }
