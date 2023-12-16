@@ -93,7 +93,7 @@ public class ArtworkService {
         }
 
         if(artworkFilters.getMediumIds().isEmpty() && artworkFilters.getMaterialIds().isEmpty()
-        && artworkFilters.getRarityIds().isEmpty() && artworkFilters.getArtworkTypeIds().isEmpty()){
+                && artworkFilters.getRarityIds().isEmpty() && artworkFilters.getArtworkTypeIds().isEmpty()){
             return searchArtwork(searchKey);
         }
 
@@ -107,7 +107,7 @@ public class ArtworkService {
         }
         return ArtworkSearchResponse.builder().artworkDtos(artworkDtos).build();
     }
-  
+
     public ArtworkSearchResponse filterArtwork(ArtworkFilters artworkFilters) {
 
         List<ArtworkDto> filteredArtworkDtos = artworkDao.getArtworkWithFilters(artworkFilters);

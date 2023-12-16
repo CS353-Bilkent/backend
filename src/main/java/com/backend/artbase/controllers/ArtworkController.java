@@ -27,7 +27,7 @@ public class ArtworkController {
     private final ArtworkService artworkService;
 
     //@formatter:off
-@PostMapping("/upload")
+    @PostMapping("/upload")
     public ResponseEntity<ApiResponse<UploadArtworkResponse>> saveArtwork(
             @RequestPart(name = "image") MultipartFile image,
             @RequestPart(name = "name") String artworkName,
@@ -48,7 +48,7 @@ public class ArtworkController {
             @RequestPart(name = "artworkDescription", required = false) String artworkDescription,
             @RequestPart(name = "artworkStatus", required = false) String artworkStatus
     ) {
-    //@formatter:on
+        //@formatter:on
         try {
 
             ArtworkStatus status = ArtworkStatus.fromCode(artworkStatus);
@@ -93,18 +93,18 @@ public class ArtworkController {
         return ResponseEntity.ok(ApiResponse.<ArtworkSearchResponse>builder()
                 .operationResultData(artworkService
                         .filterArtwork(ArtworkFilters.builder()
-                        .mediumIds(request.getMediumId())
-                        .materialIds(request.getMaterialId())
-                        .rarityIds(request.getRarityId())
-                        .artworkTypeIds(request.getArtworkTypeId())
-                        .build()))
+                                .mediumIds(request.getMediumId())
+                                .materialIds(request.getMaterialId())
+                                .rarityIds(request.getRarityId())
+                                .artworkTypeIds(request.getArtworkTypeId())
+                                .build()))
                 .build());
         //@formatter:on
     }
 
     @GetMapping("/filter_search/{searchKey}")
     public ResponseEntity<ApiResponse<ArtworkSearchResponse>> filterSearchArtwork(@PathVariable String searchKey,
-            @RequestBody GetFilteredArtworksRequest request) {
+                                                                                  @RequestBody GetFilteredArtworksRequest request) {
 
         ArtworkFilters filters = ArtworkFilters.builder().mediumIds(request.getMediumId()).materialIds(request.getMaterialId())
                 .rarityIds(request.getRarityId()).artworkTypeIds(request.getArtworkTypeId()).build();
