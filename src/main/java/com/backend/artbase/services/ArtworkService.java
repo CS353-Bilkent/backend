@@ -1,5 +1,6 @@
 package com.backend.artbase.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,18 +10,24 @@ import com.backend.artbase.entities.ArtworkType;
 import com.backend.artbase.entities.Material;
 import com.backend.artbase.entities.Medium;
 import com.backend.artbase.entities.Rarity;
+import com.backend.artbase.entities.User;
+import com.backend.artbase.entities.UserType;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.backend.artbase.daos.ArtistDao;
 import com.backend.artbase.daos.ArtworkDao;
 import com.backend.artbase.daos.FileDao;
 import com.backend.artbase.dtos.artwork.GetArtworkDisplayDetailsResponse;
 import com.backend.artbase.dtos.artwork.UploadArtworkResponse;
+import com.backend.artbase.entities.Artist;
 import com.backend.artbase.entities.Artwork;
+import com.backend.artbase.errors.ArtistRuntimeException;
 import com.backend.artbase.errors.ArtworkException;
+import com.backend.artbase.errors.UserRuntimeException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 public class ArtworkService {
 
     private final ArtworkDao artworkDao;
+    private final ArtistDao artistDao;
     private final FileDao fileDao;
     private final FileService fileService;
 
@@ -121,8 +129,34 @@ public class ArtworkService {
         return artworkDao.isArtworkValid(artworkId);
     }
 
-    public List<Artwork> getArtworksOfArtist(Integer artistId) {
-        return artworkDao.getArtworksOfArtist(artistId);
+    public List<GetArtworkDisplayDetailsResponse> getArtworksOfArtistByUserId(User user) {
+
+        if (!user.getUserType().equals(UserType.ARTIST)) {
+            throw new UserRuntimeException("User is not an artist, can not get portfolio information!", HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<Artist> optArtist = artistDao.getByUserId(user.getUserId());
+
+        if (optArtist.isEmpty()) {
+            throw new ArtistRuntimeException("Artist not found!", HttpStatus.NOT_FOUND);
+        }
+
+        Artist artist = optArtist.get();
+
+        List<Artwork> artworkList = artworkDao.getArtworksOfArtist(artist.getArtistId());
+
+        List<GetArtworkDisplayDetailsResponse> responses = new ArrayList<>();
+        artworkList.forEach(e -> {
+
+            List<String> filenames = fileDao.getArtworkFilenames(e.getArtworkId());
+
+            responses
+                    .add(GetArtworkDisplayDetailsResponse.builder().artwork(e).displayImage(fileService.getFile(filenames.get(0))).build());
+
+        });
+
+        return responses;
+
     }
 
     public void updateArtworkDescription(Integer artworkId, String newDescription) {

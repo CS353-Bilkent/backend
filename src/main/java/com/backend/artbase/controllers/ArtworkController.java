@@ -8,8 +8,10 @@ import com.backend.artbase.entities.ArtworkType;
 import com.backend.artbase.entities.Material;
 import com.backend.artbase.entities.Medium;
 import com.backend.artbase.entities.Rarity;
+import com.backend.artbase.entities.User;
 
 import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,11 +21,11 @@ import com.backend.artbase.dtos.artwork.GetFilteredArtworksRequest;
 import com.backend.artbase.dtos.artwork.UploadArtworkResponse;
 import com.backend.artbase.errors.ArtworkException;
 import com.backend.artbase.services.ArtworkService;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequiredArgsConstructor
@@ -113,9 +115,11 @@ public class ArtworkController {
                 .operationResultData(artworkService.filterSearchArtwork(searchKey, filters)).build());
     }
 
-    @GetMapping
-    public ResponseEntity<?> getArtworks(@RequestParam Integer artistId) {
-        return ResponseEntity.ok(artworkService.getArtworksOfArtist(artistId));
+    @GetMapping("/my")
+    public ResponseEntity<ApiResponse<List<GetArtworkDisplayDetailsResponse>>> getArtworks(HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+        return ResponseEntity.ok(ApiResponse.<List<GetArtworkDisplayDetailsResponse>>builder()
+                .operationResultData(artworkService.getArtworksOfArtistByUserId(user)).build());
     }
 
     @PutMapping("/{artworkId}")
