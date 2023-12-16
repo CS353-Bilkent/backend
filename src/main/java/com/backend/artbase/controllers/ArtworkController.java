@@ -4,6 +4,11 @@ import com.backend.artbase.dtos.artwork.ArtworkSearchResponse;
 import com.backend.artbase.entities.ApiResponse;
 import com.backend.artbase.entities.Artwork;
 import com.backend.artbase.entities.ArtworkFilters;
+import com.backend.artbase.entities.ArtworkType;
+import com.backend.artbase.entities.Material;
+import com.backend.artbase.entities.Medium;
+import com.backend.artbase.entities.Rarity;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +22,8 @@ import com.backend.artbase.services.ArtworkService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequiredArgsConstructor
@@ -116,5 +123,25 @@ public class ArtworkController {
         artworkService.updateArtworkDescription(artworkId, newDescription);
         return ResponseEntity.ok().build();
     }
-    
+
+    @GetMapping("/mediums")
+    public ResponseEntity<ApiResponse<List<Medium>>> getMediums() {
+        return ResponseEntity.ok(ApiResponse.<List<Medium>>builder().operationResultData(artworkService.getMediums()).build());
+    }
+
+    @GetMapping("/types")
+    public ResponseEntity<ApiResponse<List<ArtworkType>>> getTypes() {
+        return ResponseEntity.ok(ApiResponse.<List<ArtworkType>>builder().operationResultData(artworkService.getArtworkTypes()).build());
+    }
+
+    @GetMapping("/materials")
+    public ResponseEntity<ApiResponse<List<Material>>> getMaterials() {
+        return ResponseEntity.ok(ApiResponse.<List<Material>>builder().operationResultData(artworkService.getMaterials()).build());
+    }
+
+    @GetMapping("/rarities")
+    public ResponseEntity<ApiResponse<List<Rarity>>> getRarities() {
+        return ResponseEntity.ok(ApiResponse.<List<Rarity>>builder().operationResultData(artworkService.getRarities()).build());
+    }
+
 }

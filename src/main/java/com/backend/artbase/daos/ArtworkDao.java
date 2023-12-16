@@ -11,6 +11,10 @@ import com.backend.artbase.core.CustomSqlParameters;
 import com.backend.artbase.core.ResultSetWrapper;
 import com.backend.artbase.entities.Artwork;
 import com.backend.artbase.entities.ArtworkFilters;
+import com.backend.artbase.entities.ArtworkType;
+import com.backend.artbase.entities.Material;
+import com.backend.artbase.entities.Medium;
+import com.backend.artbase.entities.Rarity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -582,11 +586,54 @@ public class ArtworkDao {
         }
     }
 
-    // TO DO select * from artworks t where t.artwork_id in
+    // TODO
+    // select * from artworks t where t.artwork_id in
     // StrToTable(:artworks)
     // to reduce db calls
     public List<Artwork> getByArtworksIds(List<Integer> artworkId) {
         return null;
+    }
+
+    public List<Medium> getMediums() {
+        CustomSqlParameters params = CustomSqlParameters.create();
+        String sql = "SELECT medium_id, medium_name FROM medium";
+
+        return jdbcTemplate.query(sql, params, (rs, rnum) -> {
+            ResultSetWrapper rsw = new ResultSetWrapper(rs);
+            return Medium.builder().mediumId(rsw.getInteger("medium_id")).mediumName(rsw.getString("medium_name")).build();
+        });
+
+    }
+
+    public List<ArtworkType> getArtworkTypes() {
+        CustomSqlParameters params = CustomSqlParameters.create();
+        String sql = "SELECT artwork_type_id, artwork_type_name FROM artwork_type";
+
+        return jdbcTemplate.query(sql, params, (rs, rnum) -> {
+            ResultSetWrapper rsw = new ResultSetWrapper(rs);
+            return ArtworkType.builder().artworkTypeId(rsw.getInteger("artwork_type_id"))
+                    .artworkTypeName(rsw.getString("artwork_type_name")).build();
+        });
+    }
+
+    public List<Material> getMaterials() {
+        CustomSqlParameters params = CustomSqlParameters.create();
+        String sql = "SELECT material_id, material_name FROM material";
+
+        return jdbcTemplate.query(sql, params, (rs, rnum) -> {
+            ResultSetWrapper rsw = new ResultSetWrapper(rs);
+            return Material.builder().materialId(rsw.getInteger("material_id")).materialName(rsw.getString("material_name")).build();
+        });
+    }
+
+    public List<Rarity> getRarities() {
+        CustomSqlParameters params = CustomSqlParameters.create();
+        String sql = "SELECT rarity_id, rarity_name FROM rarity";
+
+        return jdbcTemplate.query(sql, params, (rs, rnum) -> {
+            ResultSetWrapper rsw = new ResultSetWrapper(rs);
+            return Rarity.builder().rarityId(rsw.getInteger("rarity_id")).rarityName(rsw.getString("rarity_name")).build();
+        });
     }
 
 }

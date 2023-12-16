@@ -5,6 +5,11 @@ import java.util.Optional;
 
 import com.backend.artbase.dtos.artwork.ArtworkSearchResponse;
 import com.backend.artbase.entities.ArtworkFilters;
+import com.backend.artbase.entities.ArtworkType;
+import com.backend.artbase.entities.Material;
+import com.backend.artbase.entities.Medium;
+import com.backend.artbase.entities.Rarity;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -121,10 +126,25 @@ public class ArtworkService {
     }
 
     public void updateArtworkDescription(Integer artworkId, String newDescription) {
-        Artwork artwork = artworkDao.getByArtworkId(artworkId)
-                .orElseThrow(() -> new RuntimeException("Artwork not found"));
+        Artwork artwork = artworkDao.getByArtworkId(artworkId).orElseThrow(() -> new RuntimeException("Artwork not found"));
         artwork.setArtworkDescription(newDescription);
         artworkDao.updateArtwork(artwork);
+    }
+
+    public List<Medium> getMediums() {
+        return artworkDao.getMediums();
+    }
+
+    public List<ArtworkType> getArtworkTypes() {
+        return artworkDao.getArtworkTypes();
+    }
+
+    public List<Material> getMaterials() {
+        return artworkDao.getMaterials();
+    }
+
+    public List<Rarity> getRarities() {
+        return artworkDao.getRarities();
     }
 
 }
