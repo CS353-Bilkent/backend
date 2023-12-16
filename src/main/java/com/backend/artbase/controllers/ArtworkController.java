@@ -78,12 +78,14 @@ public class ArtworkController {
                 .operationResultData(artworkService.getArtworkDisplayDetails(artworkId)).build());
     }
 
+    //TODO: bu endpointe gerek kalmamış olabilir
     @GetMapping("/search/{searchKey}")
     public ResponseEntity<ApiResponse<ArtworkSearchResponse>> searchArtwork(@PathVariable String searchKey) {
         return ResponseEntity
                 .ok(ApiResponse.<ArtworkSearchResponse>builder().operationResultData(artworkService.searchArtwork(searchKey)).build());
     }
 
+    //TODO: bu endpointe gerek kalmamış olabilir
     @GetMapping("/filter")
     public ResponseEntity<ApiResponse<ArtworkSearchResponse>> filterArtwork(@RequestBody GetFilteredArtworksRequest request) {
         //@formatter:off

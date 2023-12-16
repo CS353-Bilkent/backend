@@ -12,7 +12,6 @@ import com.backend.artbase.core.ResultSetWrapper;
 import com.backend.artbase.entities.Artwork;
 import com.backend.artbase.entities.ArtworkFilters;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -93,7 +92,7 @@ public class ArtworkDao {
         jdbcTemplate.update(sql, params);
     }
 
-    public Optional<Artwork> getByArtworkId(Integer artworkId) {
+    public Optional<ArtworkDto> getByArtworkId(Integer artworkId) {
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("artwork_id", artworkId);
 
@@ -102,8 +101,9 @@ public class ArtworkDao {
             "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
             "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
             "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
-            "a.artwork_description, a.artwork_status " +
-            "FROM artwork a WHERE a.artwork_id = :artwork_id";
+            "a.artwork_description, a.artwork_status, " +
+            "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
+            "FROM artwork a artist b WHERE a.artwork_id = :artwork_id";
         //@formatter:on
 
         try {
@@ -111,7 +111,7 @@ public class ArtworkDao {
                 ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
                 //@formatter:off
-                return Artwork.builder()
+                return ArtworkDto.builder()
                     .artworkName(rsw.getString("artwork_name"))
                     .userId(rsw.getInteger("user_id"))
                     .artistId(rsw.getInteger("artist_id"))
@@ -130,6 +130,11 @@ public class ArtworkDao {
                     .acquisitionWay(rsw.getString("acquisition_way"))
                     .artworkDescription(rsw.getString("artwork_description"))
                     .artworkStatus(ArtworkStatus.fromCode(rsw.getString("artwork_status")))
+                    .artistName(rsw.getString("artist_name"))
+                    .gender(rsw.getString("gender"))
+                    .nationality(rsw.getString("nationality"))
+                    .age(rsw.getInteger("age"))
+                    .speciality(rsw.getString("speciality"))
                     .build();
                 //@formatter:on
             }));
@@ -138,7 +143,7 @@ public class ArtworkDao {
         }
     }
 
-    public List<Artwork> getArtworksOfArtist(Integer artistId) {
+    public List<ArtworkDto> getArtworksOfArtist(Integer artistId) {
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("artist_id", artistId);
 
@@ -147,15 +152,16 @@ public class ArtworkDao {
             "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
             "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
             "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
-            "a.artwork_description, a.artwork_status " +
-            "FROM artwork a WHERE a.artist_id = :artist_id";
+            "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
+            "FROM artwork a artist b " +
+            "WHERE a.artist_id = :artist_id";
         //@formatter:on
 
         return jdbcTemplate.query(sql, params, (rs, rnum) -> {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            return Artwork.builder()
+            return ArtworkDto.builder()
                 .artworkName(rsw.getString("artwork_name"))
                 .userId(rsw.getInteger("user_id"))
                 .artistId(rsw.getInteger("artist_id"))
@@ -174,12 +180,17 @@ public class ArtworkDao {
                 .acquisitionWay(rsw.getString("acquisition_way"))
                 .artworkDescription(rsw.getString("artwork_description"))
                 .artworkStatus(ArtworkStatus.fromCode(rsw.getString("artwork_status")))
+                .artistName(rsw.getString("artist_name"))
+                .gender(rsw.getString("gender"))
+                .nationality(rsw.getString("nationality"))
+                .age(rsw.getInteger("age"))
+                .speciality(rsw.getString("speciality"))
                 .build();
             //@formatter:on
         });
     }
 
-    public List<Artwork> getArtworkWithFilters(ArtworkFilters filters) {
+    public List<ArtworkDto> getArtworkWithFilters(ArtworkFilters filters) {
         CustomSqlParameters params = CustomSqlParameters.create();
 
         CustomSqlParameters.addFilterParams(params, "medium_ids", filters.getMediumIds());
@@ -192,8 +203,8 @@ public class ArtworkDao {
             "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
             "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
             "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
-            "a.artwork_description, a.artwork_status " +
-            "FROM artwork a " +
+            "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
+            "FROM artwork a artist b" +
             "WHERE (:medium_ids IS NULL OR a.medium_id IN (SELECT * FROM STRING_TO_TABLE(:medium_ids, ','))) " +
             "OR (:material_ids IS NULL OR a.material_id IN (SELECT * FROM STRING_TO_TABLE(:material_ids, ','))) " +
             "OR (:rarity_ids IS NULL OR a.rarity_id IN (SELECT * FROM STRING_TO_TABLE(:rarity_ids, ','))) " +
@@ -210,7 +221,7 @@ public class ArtworkDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            return Artwork.builder()
+            return ArtworkDto.builder()
                 .artworkName(rsw.getString("artwork_name"))
                 .userId(rsw.getInteger("user_id"))
                 .artistId(rsw.getInteger("artist_id"))
@@ -229,12 +240,17 @@ public class ArtworkDao {
                 .acquisitionWay(rsw.getString("acquisition_way"))
                 .artworkDescription(rsw.getString("artwork_description"))
                 .artworkStatus(ArtworkStatus.fromCode(rsw.getString("artwork_status")))
+                .artistName(rsw.getString("artist_name"))
+                .gender(rsw.getString("gender"))
+                .nationality(rsw.getString("nationality"))
+                .age(rsw.getInteger("age"))
+                .speciality(rsw.getString("speciality"))
                 .build();
             //@formatter:on
         });
     }
 
-    public List<Artwork> getArtworkWithFiltersDefinitive(ArtworkFilters filters) {
+    public List<ArtworkDto> getArtworkWithFiltersDefinitive(ArtworkFilters filters) {
         CustomSqlParameters params = CustomSqlParameters.create();
 
         CustomSqlParameters.addFilterParams(params, "medium_ids", filters.getMediumIds());
@@ -247,8 +263,8 @@ public class ArtworkDao {
             "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
             "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
             "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
-            "a.artwork_description, a.artwork_status " +
-            "FROM artwork a " +
+            "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
+            "FROM artwork a artist b " +
             "WHERE (:medium_ids IS NULL OR a.medium_id IN (SELECT * FROM STRING_TO_TABLE(:medium_ids, ','))) " +
             "AND (:material_ids IS NULL OR a.material_id IN (SELECT * FROM STRING_TO_TABLE(:material_ids, ','))) " +
             "AND (:rarity_ids IS NULL OR a.rarity_id IN (SELECT * FROM STRING_TO_TABLE(:rarity_ids, ','))) " +
@@ -260,7 +276,7 @@ public class ArtworkDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            return Artwork.builder()
+            return ArtworkDto.builder()
                 .artworkName(rsw.getString("artwork_name"))
                 .userId(rsw.getInteger("user_id"))
                 .artistId(rsw.getInteger("artist_id"))
@@ -279,12 +295,17 @@ public class ArtworkDao {
                 .acquisitionWay(rsw.getString("acquisition_way"))
                 .artworkDescription(rsw.getString("artwork_description"))
                 .artworkStatus(ArtworkStatus.fromCode(rsw.getString("artwork_status")))
+                .artistName(rsw.getString("artist_name"))
+                .gender(rsw.getString("gender"))
+                .nationality(rsw.getString("nationality"))
+                .age(rsw.getInteger("age"))
+                .speciality(rsw.getString("speciality"))
                 .build();
             //@formatter:on
         });
     }
 
-    public List<Artwork> searchByName(String searchKey){
+    public List<ArtworkDto> searchByName(String searchKey){
 
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("search_key", searchKey);
@@ -292,10 +313,11 @@ public class ArtworkDao {
         //@formatter:off
         String sql =
                 "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price," +
-                        "a.artwork_type_id, a.time_period, a.rarity_id, a.medium_id" +
-                        "a.size_x, a.size_y, a.size_z, a.material_id, a.artwork_location" +
-                        "a.art_movement_id, a.acquisition_way, a.artwork_description, a.artwork_status" +
-                "FROM artwork a" +
+                "a.artwork_type_id, a.time_period, a.rarity_id, a.medium_id, " +
+                "a.size_x, a.size_y, a.size_z, a.material_id, a.artwork_location, " +
+                "a.art_movement_id, a.acquisition_way, a.artwork_description, a.artwork_status, " +
+                "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
+                "FROM artwork a artist b " +
                 "WHERE a.artwork_name LIKE CONCAT('%',:search_key,'%')";
         //@formatter:on
 
@@ -303,7 +325,7 @@ public class ArtworkDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            return Artwork.builder()
+            return ArtworkDto.builder()
                     .artworkName(rsw.getString("artwork_name"))
                     .userId(rsw.getInteger("user_id"))
                     .artistId(rsw.getInteger("artist_id"))
@@ -322,23 +344,29 @@ public class ArtworkDao {
                     .acquisitionWay(rsw.getString("acquisition_way"))
                     .artworkDescription(rsw.getString("artwork_description"))
                     .artworkStatus(ArtworkStatus.fromCode(rsw.getString("artwork_status")))
+                    .artistName(rsw.getString("artist_name"))
+                    .gender(rsw.getString("gender"))
+                    .nationality(rsw.getString("nationality"))
+                    .age(rsw.getInteger("age"))
+                    .speciality(rsw.getString("specialty"))
                     .build();
             //@formatter:on
         });
     }
 
-    public List<Artwork> searchByDescription(String searchKey){
+    public List<ArtworkDto> searchByDescription(String searchKey){
 
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("search_key", searchKey);
 
         //@formatter:off
         String sql =
-                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price," +
-                        "a.artwork_type_id, a.time_period, a.rarity_id, a.medium_id" +
-                        "a.size_x, a.size_y, a.size_z, a.material_id, a.artwork_location" +
-                        "a.art_movement_id, a.acquisition_way, a.artwork_description, a.artwork_status" +
-                        "FROM artwork a" +
+                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, " +
+                        "a.artwork_type_id, a.time_period, a.rarity_id, a.medium_id, " +
+                        "a.size_x, a.size_y, a.size_z, a.material_id, a.artwork_location, " +
+                        "a.art_movement_id, a.acquisition_way, a.artwork_description, a.artwork_status, " +
+                        "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
+                        "FROM artwork a artist b " +
                         "WHERE a.artwork_description LIKE CONCAT('%',:search_key,'%')";
         //@formatter:on
 
@@ -346,7 +374,7 @@ public class ArtworkDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            return Artwork.builder()
+            return ArtworkDto.builder()
                     .artworkName(rsw.getString("artwork_name"))
                     .userId(rsw.getInteger("user_id"))
                     .artistId(rsw.getInteger("artist_id"))
@@ -365,12 +393,17 @@ public class ArtworkDao {
                     .acquisitionWay(rsw.getString("acquisition_way"))
                     .artworkDescription(rsw.getString("artwork_description"))
                     .artworkStatus(ArtworkStatus.fromCode(rsw.getString("artwork_status")))
+                    .artistName(rsw.getString("artist_name"))
+                    .gender(rsw.getString("gender"))
+                    .nationality(rsw.getString("nationality"))
+                    .age(rsw.getInteger("age"))
+                    .speciality(rsw.getString("specialty"))
                     .build();
             //@formatter:on
         });
     }
 
-    public List<Artwork> filterSearchByName(String searchKey, ArtworkFilters artworkFilters){
+    public List<ArtworkDto> filterSearchByName(String searchKey, ArtworkFilters artworkFilters){
 
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("search_key", searchKey);
@@ -383,15 +416,16 @@ public class ArtworkDao {
         String sql =
                 "WITH temp_table as" +
                         "(SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price," +
-                        "a.artwork_type_id, a.time_period, a.rarity_id, a.medium_id" +
-                        "a.size_x, a.size_y, a.size_z, a.material_id, a.artwork_location" +
-                        "a.art_movement_id, a.acquisition_way, a.artwork_description, a.artwork_status" +
-                        "FROM artwork a" +
-                        "WHERE a.artwork_name LIKE CONCAT('%',:search_key,'%'))" +
+                        "a.artwork_type_id, a.time_period, a.rarity_id, a.medium_id, " +
+                        "a.size_x, a.size_y, a.size_z, a.material_id, a.artwork_location, " +
+                        "a.art_movement_id, a.acquisition_way, a.artwork_description, a.artwork_status, " +
+                        "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
+                        "FROM artwork a artist b " +
+                        "WHERE a.artwork_name LIKE CONCAT('%',:search_key,'%')) " +
                         "SELECT a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
                         "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
                         "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
-                        "a.artwork_description, a.artwork_status" +
+                        "a.artwork_description, a.artwork_status " +
                         "FROM temp_table a " +
                         "WHERE (:medium_ids IS NULL OR a.medium_id IN (SELECT * FROM STRING_TO_TABLE(:medium_ids, ','))) " +
                         "AND (:material_ids IS NULL OR a.material_id IN (SELECT * FROM STRING_TO_TABLE(:material_ids, ','))) " +
@@ -404,7 +438,7 @@ public class ArtworkDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            return Artwork.builder()
+            return ArtworkDto.builder()
                     .artworkName(rsw.getString("artwork_name"))
                     .userId(rsw.getInteger("user_id"))
                     .artistId(rsw.getInteger("artist_id"))
@@ -423,12 +457,17 @@ public class ArtworkDao {
                     .acquisitionWay(rsw.getString("acquisition_way"))
                     .artworkDescription(rsw.getString("artwork_description"))
                     .artworkStatus(ArtworkStatus.fromCode(rsw.getString("artwork_status")))
+                    .artistName(rsw.getString("artist_name"))
+                    .gender(rsw.getString("gender"))
+                    .nationality(rsw.getString("nationality"))
+                    .age(rsw.getInteger("age"))
+                    .speciality(rsw.getString("specialty"))
                     .build();
             //@formatter:on
         });
     }
 
-    public List<Artwork> filterSearchByDescription(String searchKey, ArtworkFilters artworkFilters){
+    public List<ArtworkDto> filterSearchByDescription(String searchKey, ArtworkFilters artworkFilters){
 
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("search_key", searchKey);
@@ -441,15 +480,16 @@ public class ArtworkDao {
         String sql =
                 "WITH temp_table as" +
                         "(SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price," +
-                        "a.artwork_type_id, a.time_period, a.rarity_id, a.medium_id" +
-                        "a.size_x, a.size_y, a.size_z, a.material_id, a.artwork_location" +
-                        "a.art_movement_id, a.acquisition_way, a.artwork_description, a.artwork_status" +
-                        "FROM artwork a" +
-                        "WHERE a.artwork_description LIKE CONCAT('%',:search_key,'%'))" +
+                        "a.artwork_type_id, a.time_period, a.rarity_id, a.medium_id, " +
+                        "a.size_x, a.size_y, a.size_z, a.material_id, a.artwork_location, " +
+                        "a.art_movement_id, a.acquisition_way, a.artwork_description, a.artwork_status, " +
+                        "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
+                        "FROM artwork a artist b " +
+                        "WHERE a.artwork_description LIKE CONCAT('%',:search_key,'%')) " +
                         "SELECT a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
                         "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
                         "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
-                        "a.artwork_description, a.artwork_status" +
+                        "a.artwork_description, a.artwork_status " +
                         "FROM temp_table a " +
                         "WHERE (:medium_ids IS NULL OR a.medium_id IN (SELECT * FROM STRING_TO_TABLE(:medium_ids, ','))) " +
                         "AND (:material_ids IS NULL OR a.material_id IN (SELECT * FROM STRING_TO_TABLE(:material_ids, ','))) " +
@@ -462,7 +502,7 @@ public class ArtworkDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
 
             //@formatter:off
-            return Artwork.builder()
+            return ArtworkDto.builder()
                     .artworkName(rsw.getString("artwork_name"))
                     .userId(rsw.getInteger("user_id"))
                     .artistId(rsw.getInteger("artist_id"))
@@ -481,11 +521,18 @@ public class ArtworkDao {
                     .acquisitionWay(rsw.getString("acquisition_way"))
                     .artworkDescription(rsw.getString("artwork_description"))
                     .artworkStatus(ArtworkStatus.fromCode(rsw.getString("artwork_status")))
+                    .artistName(rsw.getString("artist_name"))
+                    .gender(rsw.getString("gender"))
+                    .nationality(rsw.getString("nationality"))
+                    .age(rsw.getInteger("age"))
+                    .speciality(rsw.getString("specialty"))
                     .build();
             //@formatter:on
         });
     }
 
+    //TODO: alttaki commentlenmiş getArtistNamesOfArtworks function kullanımına ihtiyaç olmadığı kesinleştiği durumunda tamamen silinecek
+    /*
     public List<String> getArtistNamesOfArtworks(List<Artwork> artworks){
 
         if(artworks.isEmpty()){
@@ -514,6 +561,7 @@ public class ArtworkDao {
         }
         return artistNames;
     }
+    */
 
     public Integer getNextArtworkId() {
         String sql = "SELECT nextval('artwork_artwork_id_seq') AS next_artwork_id";
@@ -527,16 +575,16 @@ public class ArtworkDao {
     }
 
 
-    public ArtworkDto getArtworkDto(Integer artworkId){
+    public ArtworkDto getArtwork(Integer artworkId){
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("artwork_id", artworkId);
 
         //@formatter:off
         String sql =
-                   "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
+                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
                 "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
                 "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
-                "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality" +
+                "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
                 "FROM artwork a, artist b " +
                 "WHERE a.artwork_id = :artwork_id AND a.artist_id = b.artist_id";
         //@formatter:on
@@ -562,7 +610,7 @@ public class ArtworkDao {
                     .artMovementId(rsw.getInteger("art_movement_id"))
                     .acquisitionWay(rsw.getString("acquisition_way"))
                     .artworkDescription(rsw.getString("artwork_description"))
-                    .artworkStatus(rsw.getString("artwork_status"))
+                    .artworkStatus(ArtworkStatus.fromCode(rsw.getString("artwork_status")))
                     .artistName(rsw.getString("artist_name"))
                     .gender(rsw.getString("gender"))
                     .nationality(rsw.getString("nationality"))
@@ -595,12 +643,48 @@ public class ArtworkDao {
         }
     }
 
-    // TO DO select * from artworks t where t.artwork_id in
+    // TODO select * from artworks t where t.artwork_id in
     // StrToTable(:artworks)
     // to reduce db calls
-    public List<Artwork> getByArtworksIds(List<Integer> artworkId) {
+    public List<ArtworkDto> getByArtworksIds(List<Integer> artworkId) {
         return null;
     }
 
+    public List<ArtworkDto> getAllArtworks(){
 
+        CustomSqlParameters params = CustomSqlParameters.create();
+        String sql = "SELECT * FROM artist";
+
+        return jdbcTemplate.query(sql, params, (rs, rnum) -> {
+            ResultSetWrapper rsw = new ResultSetWrapper(rs);
+
+            //@formatter:off
+            return ArtworkDto.builder()
+                    .artworkName(rsw.getString("artwork_name"))
+                    .userId(rsw.getInteger("user_id"))
+                    .artistId(rsw.getInteger("artist_id"))
+                    .artworkId(rsw.getInteger("artwork_id"))
+                    .fixedPrice(rsw.getDouble("fixed_price"))
+                    .artworkTypeId(rsw.getInteger("artwork_type_id"))
+                    .timePeriod(rsw.getString("time_period"))
+                    .rarityId(rsw.getInteger("rarity_id"))
+                    .mediumId(rsw.getInteger("medium_id"))
+                    .sizeX(rsw.getDouble("size_x"))
+                    .sizeY(rsw.getDouble("size_y"))
+                    .sizeZ(rsw.getDouble("size_z"))
+                    .materialId(rsw.getInteger("material_id"))
+                    .artworkLocation(rsw.getString("artwork_location"))
+                    .artMovementId(rsw.getInteger("art_movement_id"))
+                    .acquisitionWay(rsw.getString("acquisition_way"))
+                    .artworkDescription(rsw.getString("artwork_description"))
+                    .artworkStatus(ArtworkStatus.fromCode(rsw.getString("artwork_status")))
+                    .artistName(rsw.getString("artist_name"))
+                    .gender(rsw.getString("gender"))
+                    .nationality(rsw.getString("nationality"))
+                    .age(rsw.getInteger("age"))
+                    .speciality(rsw.getString("specialty"))
+                    .build();
+            //@formatter:on
+        });
+    }
 }

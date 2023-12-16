@@ -3,6 +3,7 @@ package com.backend.artbase.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.backend.artbase.dtos.artwork.ArtworkDto;
 import com.backend.artbase.dtos.artwork.ArtworkSearchResponse;
 import com.backend.artbase.entities.ArtworkFilters;
 import org.springframework.http.HttpStatus;
@@ -42,17 +43,17 @@ public class ArtworkService {
         return UploadArtworkResponse.builder().artworkId(artworkId).build();
     }
 
-    public Artwork getArtwork(Integer artworkId) {
-        Optional<Artwork> artwork = artworkDao.getByArtworkId(artworkId);
-        if (artwork.isEmpty()) {
+    public ArtworkDto getArtwork(Integer artworkId) {
+        Optional<ArtworkDto> artworkDto = artworkDao.getByArtworkId(artworkId);
+        if (artworkDto.isEmpty()) {
             throw new ArtworkException("Artwork with given ID cannot be found", HttpStatus.NOT_FOUND);
         }
 
-        return artwork.get();
+        return artworkDto.get();
     }
 
-    public List<Artwork> getArtworks(List<Integer> artworkId) {
-        List<Artwork> artwork = artworkDao.getByArtworksIds(artworkId);
+    public List<ArtworkDto> getArtworks(List<Integer> artworkId) {
+        List<ArtworkDto> artwork = artworkDao.getByArtworksIds(artworkId);
         if (artwork.isEmpty()) {
             throw new ArtworkException("Artwork with given ID cannot be found", HttpStatus.NOT_FOUND);
         }
@@ -61,10 +62,10 @@ public class ArtworkService {
     }
 
     public GetArtworkDisplayDetailsResponse getArtworkDisplayDetails(Integer artworkId) {
-        Artwork artwork = getArtwork(artworkId);
+        ArtworkDto artworkDto = getArtwork(artworkId);
         List<byte[]> imageList = fileService.getArtworkFiles(artworkId);
 
-        return GetArtworkDisplayDetailsResponse.builder().artwork(artwork).displayImage(imageList.get(0)).build();
+        return GetArtworkDisplayDetailsResponse.builder().artworkDto(artworkDto).displayImage(imageList.get(0)).build();
     }
 
     public void addImageToArtwork(MultipartFile image, Integer artworkId) {
@@ -77,49 +78,48 @@ public class ArtworkService {
 
     public ArtworkSearchResponse searchArtwork(String searchKey){
 
-        //TODO: ArtworkSearchResponse'taki TODO yapılırsa getArtistNamesOfArtworks kullanmak yerine artworkDao'dan direkt artworkDto arrayi döndürebiliriz
-        List<Artwork> artworks = artworkDao.searchByName(searchKey);
-        if(artworks.isEmpty()){
-            artworks = artworkDao.searchByDescription(searchKey);
+        List<ArtworkDto> artworkDtos = artworkDao.searchByName(searchKey);
+        if(artworkDtos.isEmpty()){
+            artworkDtos = artworkDao.searchByDescription(searchKey);
         }
-        List<String> artistNames = artworkDao.getArtistNamesOfArtworks(artworks);
-        return ArtworkSearchResponse.builder().artworks(artworks).artistNames(artistNames).build();
+        return ArtworkSearchResponse.builder().artworkDtos(artworkDtos).build();
     }
 
     public ArtworkSearchResponse filterSearchArtwork(String searchKey, ArtworkFilters artworkFilters){
 
-        //TODO: ArtworkSearchResponse'taki TODO yapılırsa getArtistNamesOfArtworks kullanmak yerine artworkDao'dan direkt artworkDto arrayi döndürebiliriz
+        if(artworkFilters.getMediumIds().isEmpty() && artworkFilters.getMaterialIds().isEmpty()
+                && artworkFilters.getRarityIds().isEmpty() && artworkFilters.getArtworkTypeIds().isEmpty() && searchKey.equals("")){
+            return getAllArtworks();
+        }
+
         if(artworkFilters.getMediumIds().isEmpty() && artworkFilters.getMaterialIds().isEmpty()
         && artworkFilters.getRarityIds().isEmpty() && artworkFilters.getArtworkTypeIds().isEmpty()){
             return searchArtwork(searchKey);
         }
 
-        //TODO: Uncomment this
-        /*
-        if(searchKey.equals(""){
+        if(searchKey.equals("")){
             return filterArtwork(artworkFilters);
         }
-         */
 
-        List<Artwork> artworks = artworkDao.filterSearchByName(searchKey, artworkFilters);
-        if(artworks.isEmpty()){
-            artworks = artworkDao.filterSearchByDescription(searchKey, artworkFilters);
+        List<ArtworkDto> artworkDtos = artworkDao.filterSearchByName(searchKey, artworkFilters);
+        if(artworkDtos.isEmpty()){
+            artworkDtos = artworkDao.filterSearchByDescription(searchKey, artworkFilters);
         }
-        List<String> artistNames = artworkDao.getArtistNamesOfArtworks(artworks);
-        return ArtworkSearchResponse.builder().artworks(artworks).artistNames(artistNames).build();
+        return ArtworkSearchResponse.builder().artworkDtos(artworkDtos).build();
     }
   
     public ArtworkSearchResponse filterArtwork(ArtworkFilters artworkFilters) {
 
-        //TODO: ArtworkSearchResponse'taki TODO yapılırsa getArtistNamesOfArtworks kullanmak yerine artworkDao'dan direkt artworkDto arrayi döndürebiliriz
-        List<Artwork> filteredArtworks = artworkDao.getArtworkWithFilters(artworkFilters);
-        List<String> filteredArtistNames = artworkDao.getArtistNamesOfArtworks(filteredArtworks);
-        return ArtworkSearchResponse.builder().artworks(filteredArtworks).artistNames(filteredArtistNames).build();
+        List<ArtworkDto> filteredArtworkDtos = artworkDao.getArtworkWithFilters(artworkFilters);
+        return ArtworkSearchResponse.builder().artworkDtos(filteredArtworkDtos).build();
     }
 
     public Boolean isArtworkValid(Integer artworkId) {
         return artworkDao.isArtworkValid(artworkId);
     }
 
-
+    public ArtworkSearchResponse getAllArtworks(){
+        List<ArtworkDto> artworkDtos = artworkDao.getAllArtworks();
+        return ArtworkSearchResponse.builder().artworkDtos(artworkDtos).build();
+    }
 }
