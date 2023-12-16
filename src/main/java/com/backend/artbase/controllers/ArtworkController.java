@@ -55,7 +55,8 @@ public class ArtworkController {
             Artwork artwork = Artwork.builder().userId(userId).artistId(artistId).artworkName(artworkName).fixedPrice(fixedPrice)
                     .artworkTypeId(artworkTypeId).timePeriod(timePeriod).rarityId(rarityId).mediumId(mediumId).sizeX(sizeX).sizeY(sizeY)
                     .sizeZ(sizeZ).materialId(materialId).artworkLocation(artworkLocation).artMovementId(artMovementId)
-                    .acquisitionWay(acquisitionWay).artworkDescription(artworkDescription).artworkStatus(status).build();
+                    .acquisitionWay(acquisitionWay).artworkDescription(artworkDescription)
+                    .artworkStatus(ArtworkStatus.fromCode(artworkStatus)).build();
 
             return ResponseEntity.ok(
                     ApiResponse.<UploadArtworkResponse>builder().operationResultData(artworkService.saveArtwork(artwork, image)).build());
