@@ -32,8 +32,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FileService {
 
-    private final FileDao fileDao;
-
     @Value("${gcp.config.file}")
     private String keyFile;
 
@@ -61,7 +59,7 @@ public class FileService {
             Storage storage = options.getService();
             Bucket bucket = storage.get(bucketId, Storage.BucketGetOption.fields());
 
-            Blob blob = bucket.create(dirName + "/" + fileName + extension, fileData);
+            Blob blob = bucket.create(dirName + "/" + fileName, fileData);
 
             if (blob != null) {
                 System.out.println("File successfully uploaded to GCS");
