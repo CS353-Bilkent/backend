@@ -5,6 +5,12 @@ import com.backend.artbase.entities.ApiResponse;
 import com.backend.artbase.entities.Artwork;
 import com.backend.artbase.entities.ArtworkFilters;
 import com.backend.artbase.entities.ArtworkStatus;
+import com.backend.artbase.entities.ArtworkType;
+import com.backend.artbase.entities.Material;
+import com.backend.artbase.entities.Medium;
+import com.backend.artbase.entities.Rarity;
+import com.backend.artbase.entities.User;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +21,8 @@ import com.backend.artbase.dtos.artwork.GetFilteredArtworksRequest;
 import com.backend.artbase.dtos.artwork.UploadArtworkResponse;
 import com.backend.artbase.errors.ArtworkException;
 import com.backend.artbase.services.ArtworkService;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -100,6 +108,39 @@ public class ArtworkController {
                                 .build()))
                 .build());
         //@formatter:on
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<ApiResponse<List<GetArtworkDisplayDetailsResponse>>> getArtworks(HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+        return ResponseEntity.ok(ApiResponse.<List<GetArtworkDisplayDetailsResponse>>builder()
+                .operationResultData(artworkService.getArtworksOfArtistByUserId(user)).build());
+    }
+
+    @PutMapping("/{artworkId}")
+    public ResponseEntity<?> updateArtworkDescription(@PathVariable Integer artworkId, @RequestBody String newDescription) {
+        artworkService.updateArtworkDescription(artworkId, newDescription);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/mediums")
+    public ResponseEntity<ApiResponse<List<Medium>>> getMediums() {
+        return ResponseEntity.ok(ApiResponse.<List<Medium>>builder().operationResultData(artworkService.getMediums()).build());
+    }
+
+    @GetMapping("/types")
+    public ResponseEntity<ApiResponse<List<ArtworkType>>> getTypes() {
+        return ResponseEntity.ok(ApiResponse.<List<ArtworkType>>builder().operationResultData(artworkService.getArtworkTypes()).build());
+    }
+
+    @GetMapping("/materials")
+    public ResponseEntity<ApiResponse<List<Material>>> getMaterials() {
+        return ResponseEntity.ok(ApiResponse.<List<Material>>builder().operationResultData(artworkService.getMaterials()).build());
+    }
+
+    @GetMapping("/rarities")
+    public ResponseEntity<ApiResponse<List<Rarity>>> getRarities() {
+        return ResponseEntity.ok(ApiResponse.<List<Rarity>>builder().operationResultData(artworkService.getRarities()).build());
     }
 
     @GetMapping("/filter_search/{searchKey}")

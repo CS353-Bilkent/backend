@@ -32,8 +32,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FileService {
 
-    private final FileDao fileDao;
-
     @Value("${gcp.config.file}")
     private String keyFile;
 
@@ -61,7 +59,7 @@ public class FileService {
             Storage storage = options.getService();
             Bucket bucket = storage.get(bucketId, Storage.BucketGetOption.fields());
 
-            Blob blob = bucket.create(dirName + "/" + fileName + extension, fileData);
+            Blob blob = bucket.create(dirName + "/" + fileName, fileData);
 
             if (blob != null) {
                 System.out.println("File successfully uploaded to GCS");
@@ -77,22 +75,6 @@ public class FileService {
 
     public byte[] getFile(String filename) {
         return getFileAsByteArrayFromGCS(filename);
-    }
-
-    public List<byte[]> getArtworkFiles(Integer artworkId) {
-        List<String> artworkFilenames = fileDao.getArtworkFilenames(artworkId);
-
-        List<byte[]> fileList = new ArrayList<>();
-
-        for (String filename : artworkFilenames) {
-            byte[] file = getFileAsByteArrayFromGCS(filename);
-            fileList.add(file);
-        }
-        if (fileList.isEmpty()) {
-            throw new RuntimeFileException("Image files with given artwork id cannot be found", HttpStatus.NOT_FOUND);
-        }
-        return fileList;
-
     }
 
     private byte[] getFileAsByteArrayFromGCS(String filename) {
@@ -112,7 +94,7 @@ public class FileService {
         }
     }
 
-    private String checkFileExtension(String fileName) {
+    public String checkFileExtension(String fileName) {
         if (fileName != null && fileName.contains(".")) {
             String[] extensionList = { ".png", ".jpeg", ".jpg" };
 

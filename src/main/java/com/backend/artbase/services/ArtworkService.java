@@ -1,22 +1,34 @@
 package com.backend.artbase.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import com.backend.artbase.dtos.artwork.ArtworkDto;
 import com.backend.artbase.dtos.artwork.ArtworkSearchResponse;
 import com.backend.artbase.entities.ArtworkFilters;
+import com.backend.artbase.entities.ArtworkType;
+import com.backend.artbase.entities.Material;
+import com.backend.artbase.entities.Medium;
+import com.backend.artbase.entities.Rarity;
+import com.backend.artbase.entities.User;
+import com.backend.artbase.entities.UserType;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.backend.artbase.daos.ArtistDao;
 import com.backend.artbase.daos.ArtworkDao;
 import com.backend.artbase.daos.FileDao;
 import com.backend.artbase.dtos.artwork.GetArtworkDisplayDetailsResponse;
 import com.backend.artbase.dtos.artwork.UploadArtworkResponse;
+import com.backend.artbase.entities.Artist;
 import com.backend.artbase.entities.Artwork;
+import com.backend.artbase.errors.ArtistRuntimeException;
 import com.backend.artbase.errors.ArtworkException;
+import com.backend.artbase.errors.UserRuntimeException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +38,7 @@ import lombok.RequiredArgsConstructor;
 public class ArtworkService {
 
     private final ArtworkDao artworkDao;
+    private final ArtistDao artistDao;
     private final FileDao fileDao;
     private final FileService fileService;
 
@@ -36,7 +49,7 @@ public class ArtworkService {
         artworkDao.saveArtwork(artwork);
 
         Integer file_id = fileDao.getNextFileId();
-        String filename = artworkId.toString() + "_" + file_id.toString();
+        String filename = artworkId.toString() + "_" + file_id.toString() + fileService.checkFileExtension(image.getOriginalFilename());
         fileDao.saveArtworkFile(file_id, filename, artworkId);
         fileService.uploadFile(image, filename);
 
@@ -63,9 +76,9 @@ public class ArtworkService {
 
     public GetArtworkDisplayDetailsResponse getArtworkDisplayDetails(Integer artworkId) {
         ArtworkDto artworkDto = getArtwork(artworkId);
-        List<byte[]> imageList = fileService.getArtworkFiles(artworkId);
+        List<String> filenames = fileDao.getArtworkFilenames(artworkId);
 
-        return GetArtworkDisplayDetailsResponse.builder().artworkDto(artworkDto).displayImage(imageList.get(0)).build();
+        return GetArtworkDisplayDetailsResponse.builder().artworkDto(artworkDto).displayImage(fileService.getFile(filenames.get(0))).build();
     }
 
     public void addImageToArtwork(MultipartFile image, Integer artworkId) {
@@ -75,8 +88,7 @@ public class ArtworkService {
         fileService.uploadFile(image, filename);
     }
 
-
-    public ArtworkSearchResponse searchArtwork(String searchKey){
+    public ArtworkSearchResponse searchArtwork(String searchKey) {
 
         List<ArtworkDto> artworkDtos = artworkDao.searchByName(searchKey);
         if(artworkDtos.isEmpty()){
@@ -85,7 +97,7 @@ public class ArtworkService {
         return ArtworkSearchResponse.builder().artworkDtos(artworkDtos).build();
     }
 
-    public ArtworkSearchResponse filterSearchArtwork(String searchKey, ArtworkFilters artworkFilters){
+    public ArtworkSearchResponse filterSearchArtwork(String searchKey, ArtworkFilters artworkFilters) {
 
         if(artworkFilters.getMediumIds().isEmpty() && artworkFilters.getMaterialIds().isEmpty()
                 && artworkFilters.getRarityIds().isEmpty() && artworkFilters.getArtworkTypeIds().isEmpty() && searchKey.equals("")){
@@ -116,6 +128,76 @@ public class ArtworkService {
 
     public Boolean isArtworkValid(Integer artworkId) {
         return artworkDao.isArtworkValid(artworkId);
+    }
+
+    public List<GetArtworkDisplayDetailsResponse> getArtworksOfArtistByUserId(User user) {
+
+        if (!user.getUserType().equals(UserType.ARTIST)) {
+            throw new UserRuntimeException("User is not an artist, can not get portfolio information!", HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<Artist> optArtist = artistDao.getByUserId(user.getUserId());
+
+        if (optArtist.isEmpty()) {
+            throw new ArtistRuntimeException("Artist not found!", HttpStatus.NOT_FOUND);
+        }
+
+        Artist artist = optArtist.get();
+
+        List<ArtworkDto> artworkDtoList = artworkDao.getArtworksOfArtist(artist.getArtistId());
+
+        List<GetArtworkDisplayDetailsResponse> responses = new ArrayList<>();
+        artworkDtoList.forEach(e -> {
+
+            List<String> filenames = fileDao.getArtworkFilenames(e.getArtworkId());
+
+            responses
+                    .add(GetArtworkDisplayDetailsResponse.builder().artworkDto(e).displayImage(fileService.getFile(filenames.get(0))).build());
+
+        });
+
+        return responses;
+
+    }
+
+    public void updateArtworkDescription(Integer artworkId, String newDescription) {
+        ArtworkDto artworkDto = artworkDao.getByArtworkId(artworkId).orElseThrow(() -> new RuntimeException("Artwork not found"));
+        artworkDto.setArtworkDescription(newDescription);
+        artworkDao.updateArtwork(Artwork.builder()
+                .artworkName(artworkDto.getArtworkName())
+                .userId(artworkDto.getUserId())
+                .artistId(artworkDto.getArtistId())
+                .fixedPrice(artworkDto.getFixedPrice())
+                .artworkTypeId(artworkDto.getArtworkTypeId())
+                .timePeriod(artworkDto.getTimePeriod())
+                .rarityId(artworkDto.getRarityId())
+                .mediumId(artworkDto.getMediumId())
+                .sizeX(artworkDto.getSizeX())
+                .sizeY(artworkDto.getSizeY())
+                .sizeZ(artworkDto.getSizeZ())
+                .materialId(artworkDto.getMaterialId())
+                .artworkLocation(artworkDto.getArtworkLocation())
+                .artMovementId(artworkDto.getArtMovementId())
+                .acquisitionWay(artworkDto.getAcquisitionWay())
+                .artworkDescription(artworkDto.getArtworkDescription())
+                .artworkStatus(artworkDto.getArtworkStatus())
+                .build());
+    }
+
+    public List<Medium> getMediums() {
+        return artworkDao.getMediums();
+    }
+
+    public List<ArtworkType> getArtworkTypes() {
+        return artworkDao.getArtworkTypes();
+    }
+
+    public List<Material> getMaterials() {
+        return artworkDao.getMaterials();
+    }
+
+    public List<Rarity> getRarities() {
+        return artworkDao.getRarities();
     }
 
     public ArtworkSearchResponse getAllArtworks(){
