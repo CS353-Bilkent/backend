@@ -20,7 +20,7 @@ public class BidService {
 
     public Bid approveBid(Integer bidId) throws Exception {
         Bid bid = bidDao.findById(bidId)
-                .orElseThrow(() -> new Exception("Payment not found with id: " + bidId));
+                .orElseThrow(() -> new Exception("Bid not found with id: " + bidId));
         
         bid.setBidStatus(true);
         return bidDao.save(bid);
@@ -28,7 +28,7 @@ public class BidService {
 
     public Bid rejectBid(Integer bidId) throws Exception {
         Bid bid = bidDao.findById(bidId)
-            .orElseThrow(() -> new Exception("Payment not found with id: " + bidId));
+            .orElseThrow(() -> new Exception("Bid not found with id: " + bidId));
 
         bid.setBidStatus(false);
         return bidDao.save(bid);
