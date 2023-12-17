@@ -71,7 +71,7 @@ public final class CustomSqlParameters {
 
     public void put(String name, Boolean value) {
         if (value != null) {
-            params.addValue(name, JdbcUtils.booleanToTF(value));
+            params.addValue(name, value);
         } else {
             putNull(name);
         }
