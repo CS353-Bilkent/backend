@@ -24,7 +24,7 @@ public class BidDao {
         params.put("bid_id", bidId);
 
         //@formatter:off
-        String sql = "SELECT bid_id, auction_id, user_id, bid_amount, bid_time " +
+        String sql = "SELECT bid_id, auction_id, user_id, bid_amount, bid_status, bid_time " +
                      "FROM bid WHERE bid_id = :bid_id";
         //@formatter:on
 
@@ -37,6 +37,7 @@ public class BidDao {
                         .auctionId(rsw.getInteger("auction_id"))
                         .userId(rsw.getInteger("user_id"))
                         .bidAmount(rsw.getBigDecimal("bid_amount"))
+                        .bidStatus(rsw.getBoolean("bid_status"))
                         .bidTime(rsw.getLocalDateTime("bid_time"))
                         .build();
                 //@formatter:on
@@ -50,10 +51,10 @@ public class BidDao {
     public Bid save(Bid bid) {
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("bid_id", bid.getBidId());
-        params.put("approved", bid.getBidStatus());
+        params.put("bid_status", bid.getBidStatus());
 
         //@formatter:off
-        String sql = "UPDATE bid SET approved = :approved WHERE bid_id = :bid_id";
+        String sql = "UPDATE bid SET bid_status = :bid_status WHERE bid_id = :bid_id";
         //@formatter:on
 
         jdbcTemplate.update(sql, params);
@@ -65,7 +66,7 @@ public class BidDao {
         params.put("artwork_id", artworkId);
 
         String sql = 
-            "SELECT b.bid_id, b.auction_id, b.user_id, b.bid_amount, b.bid_time " +
+            "SELECT b.bid_id, b.auction_id, b.user_id, b.bid_amount, b.bid_status, b.bid_time " +
             "FROM bid b " +
             "JOIN auction a ON b.auction_id = a.auction_id " +
             "WHERE a.artwork_id = :artwork_id";
