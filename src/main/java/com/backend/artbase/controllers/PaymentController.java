@@ -23,4 +23,14 @@ public class PaymentController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PutMapping("/payments/reject/{bidId}")
+    public ResponseEntity<?> rejectPayment(@PathVariable Integer bidId) {
+        try {
+            Payment payment = paymentService.rejectPayment(bidId);
+            return ResponseEntity.ok(payment);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

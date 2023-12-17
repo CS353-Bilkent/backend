@@ -18,4 +18,12 @@ public class PaymentService {
         payment.setApproved(true);
         return paymentDao.save(payment);
     }
+
+    public Payment rejectPayment(Integer paymentId) throws Exception {
+        Payment payment = paymentDao.findById(paymentId)
+            .orElseThrow(() -> new Exception("Payment not found with id: " + paymentId));
+
+        payment.setApproved(false);
+        return paymentDao.save(payment);
+    }
 }
