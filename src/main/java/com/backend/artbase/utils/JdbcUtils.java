@@ -11,23 +11,19 @@ import org.springframework.stereotype.Component;
 public class JdbcUtils {
 
     public static Object convert(Date value) {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
     public static Object convert(LocalDateTime value) {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
     public static Object convert(LocalDate value) {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
     public static Object convert(LocalTime value) {
-        return null;
-    }
-
-    public static Object booleanToTF(Boolean value) {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
 }

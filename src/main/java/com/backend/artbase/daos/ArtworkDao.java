@@ -310,7 +310,7 @@ public class ArtworkDao {
         });
     }
 
-    public List<ArtworkDto> searchByName(String searchKey){
+    public List<ArtworkDto> searchByName(String searchKey) {
 
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("search_key", searchKey);
@@ -359,7 +359,7 @@ public class ArtworkDao {
         });
     }
 
-    public List<ArtworkDto> searchByDescription(String searchKey){
+    public List<ArtworkDto> searchByDescription(String searchKey) {
 
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("search_key", searchKey);
@@ -408,7 +408,7 @@ public class ArtworkDao {
         });
     }
 
-    public List<ArtworkDto> filterSearchByName(String searchKey, ArtworkFilters artworkFilters){
+    public List<ArtworkDto> filterSearchByName(String searchKey, ArtworkFilters artworkFilters) {
 
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("search_key", searchKey);
@@ -472,7 +472,7 @@ public class ArtworkDao {
         });
     }
 
-    public List<ArtworkDto> filterSearchByDescription(String searchKey, ArtworkFilters artworkFilters){
+    public List<ArtworkDto> filterSearchByDescription(String searchKey, ArtworkFilters artworkFilters) {
 
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("search_key", searchKey);
@@ -536,7 +536,8 @@ public class ArtworkDao {
         });
     }
 
-    //TODO: alttaki commentlenmiş getArtistNamesOfArtworks function kullanımına ihtiyaç olmadığı kesinleştiği durumunda tamamen silinecek
+    // TODO: alttaki commentlenmiş getArtistNamesOfArtworks function kullanımına
+    // ihtiyaç olmadığı kesinleştiği durumunda tamamen silinecek
     /*
     public List<String> getArtistNamesOfArtworks(List<Artwork> artworks){
 
@@ -579,7 +580,7 @@ public class ArtworkDao {
         });
     }
 
-    public ArtworkDto getArtwork(Integer artworkId){
+    public ArtworkDto getArtwork(Integer artworkId) {
 
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("artwork_id", artworkId);
@@ -697,7 +698,7 @@ public class ArtworkDao {
         });
     }
 
-    public List<ArtworkDto> getAllArtworks(){
+    public List<ArtworkDto> getAllArtworks() {
 
         CustomSqlParameters params = CustomSqlParameters.create();
         String sql = "SELECT * FROM artist";
