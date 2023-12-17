@@ -24,7 +24,7 @@ public class PaymentController {
         }
     }
 
-    @PutMapping("/payments/reject/{bidId}")
+    @PutMapping("/reject/{bidId}")
     public ResponseEntity<?> rejectPayment(@PathVariable Integer bidId) {
         try {
             Payment payment = paymentService.rejectPayment(bidId);

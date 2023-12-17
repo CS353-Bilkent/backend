@@ -26,6 +26,9 @@ public class Bid {
     private BigDecimal bidAmount;
 
     @NonNull
+    private Boolean bidStatus;
+
+    @NonNull
     private LocalDateTime bidTime;
 
 }

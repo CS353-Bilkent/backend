@@ -20,4 +20,24 @@ public class BidController {
         List<Bid> bids = bidService.getBidsForArtwork(artworkId);
         return ResponseEntity.ok(bids);
     }
+
+    @PutMapping("/approve/{bidId}")
+    public ResponseEntity<?> approvePayment(@PathVariable Integer bidId) {
+        try {
+            Bid bid = bidService.approveBid(bidId);
+            return ResponseEntity.ok(bid);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/reject/{bidId}")
+    public ResponseEntity<?> rejectPayment(@PathVariable Integer bidId) {
+        try {
+            Bid bid = bidService.rejectBid(bidId);
+            return ResponseEntity.ok(bid);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

@@ -15,5 +15,6 @@ public class BidDto {
     private Integer auctionId;
     private Integer userId;
     private BigDecimal bidAmount;
+    private Boolean bidStatus;
     private LocalDateTime bidTime;
 }

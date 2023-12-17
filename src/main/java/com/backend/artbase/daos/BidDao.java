@@ -4,18 +4,61 @@ import com.backend.artbase.core.CustomJdbcTemplate;
 import com.backend.artbase.core.CustomSqlParameters;
 import com.backend.artbase.core.ResultSetWrapper;
 import com.backend.artbase.entities.Bid;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
 public class BidDao {
 
     private final CustomJdbcTemplate jdbcTemplate;
+
+    public Optional<Bid> findById(Integer bidId) {
+        CustomSqlParameters params = CustomSqlParameters.create();
+        params.put("bid_id", bidId);
+
+        //@formatter:off
+        String sql = "SELECT bid_id, auction_id, user_id, bid_amount, bid_time " +
+                     "FROM bid WHERE bid_id = :bid_id";
+        //@formatter:on
+
+        try {
+            Bid bid = jdbcTemplate.queryForObject(sql, params, (rs, rowNum) -> {
+                ResultSetWrapper rsw = new ResultSetWrapper(rs);
+                //@formatter:off
+                return Bid.builder()
+                        .bidId(rsw.getLong("bid_id"))
+                        .auctionId(rsw.getInteger("auction_id"))
+                        .userId(rsw.getInteger("user_id"))
+                        .bidAmount(rsw.getBigDecimal("bid_amount"))
+                        .bidTime(rsw.getLocalDateTime("bid_time"))
+                        .build();
+                //@formatter:on
+            });
+            return Optional.ofNullable(bid);
+        } catch (Exception ex) {
+            return Optional.empty();
+        }
+    }
+
+    public Bid save(Bid bid) {
+        CustomSqlParameters params = CustomSqlParameters.create();
+        params.put("bid_id", bid.getBidId());
+        params.put("approved", bid.getBidStatus());
+
+        //@formatter:off
+        String sql = "UPDATE bid SET approved = :approved WHERE bid_id = :bid_id";
+        //@formatter:on
+
+        jdbcTemplate.update(sql, params);
+        return bid;
+    }
 
     public List<Bid> findBidsByArtworkId(Integer artworkId) {
         CustomSqlParameters params = CustomSqlParameters.create();
