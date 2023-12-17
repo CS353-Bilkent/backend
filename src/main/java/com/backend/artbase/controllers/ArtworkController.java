@@ -1,6 +1,7 @@
 package com.backend.artbase.controllers;
 
 import com.backend.artbase.dtos.artwork.ArtworkSearchResponse;
+import com.backend.artbase.dtos.artwork.DescriptionDto;
 import com.backend.artbase.entities.ApiResponse;
 import com.backend.artbase.entities.Artwork;
 import com.backend.artbase.entities.ArtworkFilters;
@@ -117,8 +118,9 @@ public class ArtworkController {
     }
 
     @PutMapping("/{artworkId}")
-    public ResponseEntity<?> updateArtworkDescription(@PathVariable Integer artworkId, @RequestBody String newDescription) {
-        artworkService.updateArtworkDescription(artworkId, newDescription);
+    public ResponseEntity<?> updateArtworkDescription(@PathVariable Integer artworkId, @RequestBody DescriptionDto descriptionDto) {
+        artworkService.updateArtworkDescription(artworkId, descriptionDto.getNewDescription());
+        System.out.println(descriptionDto.getNewDescription());
         return ResponseEntity.ok().build();
     }
 
