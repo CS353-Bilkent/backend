@@ -25,7 +25,6 @@ public class Bid {
     @NonNull
     private BigDecimal bidAmount;
 
-    @NonNull
     private Boolean bidStatus;
 
     @NonNull
