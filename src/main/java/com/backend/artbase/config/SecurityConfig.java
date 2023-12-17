@@ -19,19 +19,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig implements WebMvcConfigurer {
 
+    private final JwtTokenFilter filter;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    private final JwtTokenFilter filter;
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().configurationSource(request -> {
-            CorsConfiguration cors = new CorsConfiguration().applyPermitDefaultValues().setAllowedOriginPatterns(List.of("*"));
-
-            cors.addAllowedMethod("DELETE");
+            CorsConfiguration cors = new CorsConfiguration();
+            cors.setAllowedOrigins(List.of("http://localhost:3000"));
+            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            cors.setAllowedHeaders(List.of("*"));
+            cors.setAllowCredentials(true);
             return cors;
         });
 
@@ -43,11 +45,9 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Bean
     public FilterRegistrationBean<JwtTokenFilter> jwtTokenFilterFilterRegistrationBean() {
         FilterRegistrationBean<JwtTokenFilter> registrationBean = new FilterRegistrationBean<>();
-
         registrationBean.setFilter(filter);
         registrationBean.addUrlPatterns("*");
         registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE);
-
         return registrationBean;
     }
 }
