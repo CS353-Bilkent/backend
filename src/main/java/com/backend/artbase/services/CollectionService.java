@@ -110,7 +110,8 @@ public class CollectionService {
             artworkDtos.add(artworkService.getArtwork(e));
         });
 
-        return CollectionDto.builder().artworkDtos(artworkDtos).collection(collection).build();
+        return CollectionDto.builder().artworkDtos(artworkService.getArtworksDisplayDetailsFromDtos(artworkDtos)).collection(collection)
+                .build();
     }
 
 }

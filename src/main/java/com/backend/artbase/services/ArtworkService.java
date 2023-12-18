@@ -192,13 +192,7 @@ public class ArtworkService {
         return ArtworkSearchResponse.builder().artworkDtos(getArtworksDisplayDetailsFromDtos(artworkDtos)).build();
     }
 
-    private ArtworkDisplayDetails getArtworkDisplayDetailsFromDto(ArtworkDto artworkDto) {
-        List<String> filenames = fileDao.getArtworkFilenames(artworkDto.getArtworkId());
-
-        return ArtworkDisplayDetails.builder().artworkDto(artworkDto).displayImage(fileService.getFile(filenames.get(0))).build();
-    }
-
-    private List<ArtworkDisplayDetails> getArtworksDisplayDetailsFromDtos(List<ArtworkDto> dtoList) {
+    public List<ArtworkDisplayDetails> getArtworksDisplayDetailsFromDtos(List<ArtworkDto> dtoList) {
         List<ArtworkDisplayDetails> displayDetailsList = new ArrayList<>();
         dtoList.forEach(e -> {
             List<String> filenames = fileDao.getArtworkFilenames(e.getArtworkId());

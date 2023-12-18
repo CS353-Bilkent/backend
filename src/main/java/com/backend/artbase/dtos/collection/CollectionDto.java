@@ -2,6 +2,7 @@ package com.backend.artbase.dtos.collection;
 
 import java.util.List;
 
+import com.backend.artbase.dtos.artwork.ArtworkDisplayDetails;
 import com.backend.artbase.dtos.artwork.ArtworkDto;
 import com.backend.artbase.entities.ArtworkCollection;
 
@@ -15,5 +16,5 @@ import lombok.Setter;
 public class CollectionDto {
 
     private ArtworkCollection collection;
-    private List<ArtworkDto> artworkDtos;
+    private List<ArtworkDisplayDetails> artworkDtos;
 }
