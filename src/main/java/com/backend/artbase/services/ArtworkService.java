@@ -124,7 +124,7 @@ public class ArtworkService {
         return artworkDao.isArtworkValid(artworkId);
     }
 
-    public List<ArtworkDisplayDetails> getArtworksOfArtistByUserId(User user) {
+    public ArtworkSearchResponse getArtworksOfArtistByUserId(User user) {
 
         if (!user.getUserType().equals(UserType.ARTIST)) {
             throw new UserRuntimeException("User is not an artist, can not get portfolio information!", HttpStatus.BAD_REQUEST);
@@ -140,16 +140,7 @@ public class ArtworkService {
 
         List<ArtworkDto> artworkDtoList = artworkDao.getArtworksOfArtist(artist.getArtistId());
 
-        List<ArtworkDisplayDetails> responses = new ArrayList<>();
-        artworkDtoList.forEach(e -> {
-
-            List<String> filenames = fileDao.getArtworkFilenames(e.getArtworkId());
-
-            responses.add(ArtworkDisplayDetails.builder().artworkDto(e).displayImage(fileService.getFile(filenames.get(0))).build());
-
-        });
-
-        return responses;
+        return ArtworkSearchResponse.builder().artworkDtos(getArtworksDisplayDetailsFromDtos(artworkDtoList)).build();
 
     }
 

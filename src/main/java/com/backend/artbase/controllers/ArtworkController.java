@@ -105,10 +105,10 @@ public class ArtworkController {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<ApiResponse<List<ArtworkDisplayDetails>>> getArtworks(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<ArtworkSearchResponse>> getArtworks(HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
-        return ResponseEntity.ok(ApiResponse.<List<ArtworkDisplayDetails>>builder()
-                .operationResultData(artworkService.getArtworksOfArtistByUserId(user)).build());
+        return ResponseEntity.ok(
+                ApiResponse.<ArtworkSearchResponse>builder().operationResultData(artworkService.getArtworksOfArtistByUserId(user)).build());
     }
 
     @PutMapping("/{artworkId}")
