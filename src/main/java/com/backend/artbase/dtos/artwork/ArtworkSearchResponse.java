@@ -11,5 +11,5 @@ import java.util.List;
 @Builder
 public class ArtworkSearchResponse {
 
-    private List<ArtworkDto> artworkDtos;
+    private List<ArtworkDisplayDetails> artworkDtos;
 }

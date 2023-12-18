@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.backend.artbase.dtos.artwork.GetArtworkDisplayDetailsResponse;
+import com.backend.artbase.dtos.artwork.ArtworkDisplayDetails;
 import com.backend.artbase.dtos.artwork.GetFilteredArtworksRequest;
 import com.backend.artbase.dtos.artwork.UploadArtworkResponse;
 import com.backend.artbase.errors.ArtworkException;
@@ -75,15 +75,9 @@ public class ArtworkController {
         }
     }
 
-    @PostMapping("/addImage/{artworkId}")
-    public ResponseEntity<ApiResponse<?>> addImageToArtwork(@PathVariable Integer artworkId, @RequestPart MultipartFile image) {
-        artworkService.addImageToArtwork(image, artworkId);
-        return ResponseEntity.ok(ApiResponse.builder().build());
-    }
-
     @GetMapping("/details/{artworkId}")
-    public ResponseEntity<ApiResponse<GetArtworkDisplayDetailsResponse>> getArtworkDisplayDetails(@PathVariable Integer artworkId) {
-        return ResponseEntity.ok(ApiResponse.<GetArtworkDisplayDetailsResponse>builder()
+    public ResponseEntity<ApiResponse<ArtworkDisplayDetails>> getArtworkDisplayDetails(@PathVariable Integer artworkId) {
+        return ResponseEntity.ok(ApiResponse.<ArtworkDisplayDetails>builder()
                 .operationResultData(artworkService.getArtworkDisplayDetails(artworkId)).build());
     }
 
@@ -111,9 +105,9 @@ public class ArtworkController {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<ApiResponse<List<GetArtworkDisplayDetailsResponse>>> getArtworks(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<List<ArtworkDisplayDetails>>> getArtworks(HttpServletRequest request) {
         User user = (User) request.getAttribute("user");
-        return ResponseEntity.ok(ApiResponse.<List<GetArtworkDisplayDetailsResponse>>builder()
+        return ResponseEntity.ok(ApiResponse.<List<ArtworkDisplayDetails>>builder()
                 .operationResultData(artworkService.getArtworksOfArtistByUserId(user)).build());
     }
 

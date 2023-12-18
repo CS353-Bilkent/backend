@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.backend.artbase.daos.ArtistDao;
 import com.backend.artbase.daos.ArtworkDao;
 import com.backend.artbase.daos.FileDao;
-import com.backend.artbase.dtos.artwork.GetArtworkDisplayDetailsResponse;
+import com.backend.artbase.dtos.artwork.ArtworkDisplayDetails;
 import com.backend.artbase.dtos.artwork.UploadArtworkResponse;
 import com.backend.artbase.entities.Artist;
 import com.backend.artbase.entities.Artwork;
@@ -74,19 +74,11 @@ public class ArtworkService {
         return artwork;
     }
 
-    public GetArtworkDisplayDetailsResponse getArtworkDisplayDetails(Integer artworkId) {
+    public ArtworkDisplayDetails getArtworkDisplayDetails(Integer artworkId) {
         ArtworkDto artworkDto = getArtwork(artworkId);
         List<String> filenames = fileDao.getArtworkFilenames(artworkId);
 
-        return GetArtworkDisplayDetailsResponse.builder().artworkDto(artworkDto).displayImage(fileService.getFile(filenames.get(0)))
-                .build();
-    }
-
-    public void addImageToArtwork(MultipartFile image, Integer artworkId) {
-        Integer file_id = fileDao.getNextFileId();
-        String filename = artworkId.toString() + "_" + file_id.toString();
-        fileDao.saveArtworkFile(file_id, filename, artworkId);
-        fileService.uploadFile(image, filename);
+        return ArtworkDisplayDetails.builder().artworkDto(artworkDto).displayImage(fileService.getFile(filenames.get(0))).build();
     }
 
     public ArtworkSearchResponse searchArtwork(String searchKey) {
@@ -95,7 +87,8 @@ public class ArtworkService {
         if (artworkDtos.isEmpty()) {
             artworkDtos = artworkDao.searchByDescription(searchKey);
         }
-        return ArtworkSearchResponse.builder().artworkDtos(artworkDtos).build();
+
+        return ArtworkSearchResponse.builder().artworkDtos(getArtworksDisplayDetailsFromDtos(artworkDtos)).build();
     }
 
     public ArtworkSearchResponse filterSearchArtwork(String searchKey, ArtworkFilters artworkFilters) {
@@ -118,20 +111,20 @@ public class ArtworkService {
         if (artworkDtos.isEmpty()) {
             artworkDtos = artworkDao.filterSearchByDescription(searchKey, artworkFilters);
         }
-        return ArtworkSearchResponse.builder().artworkDtos(artworkDtos).build();
+        return ArtworkSearchResponse.builder().artworkDtos(getArtworksDisplayDetailsFromDtos(artworkDtos)).build();
     }
 
     public ArtworkSearchResponse filterArtwork(ArtworkFilters artworkFilters) {
 
         List<ArtworkDto> filteredArtworkDtos = artworkDao.getArtworkWithFilters(artworkFilters);
-        return ArtworkSearchResponse.builder().artworkDtos(filteredArtworkDtos).build();
+        return ArtworkSearchResponse.builder().artworkDtos(getArtworksDisplayDetailsFromDtos(filteredArtworkDtos)).build();
     }
 
     public Boolean isArtworkValid(Integer artworkId) {
         return artworkDao.isArtworkValid(artworkId);
     }
 
-    public List<GetArtworkDisplayDetailsResponse> getArtworksOfArtistByUserId(User user) {
+    public List<ArtworkDisplayDetails> getArtworksOfArtistByUserId(User user) {
 
         if (!user.getUserType().equals(UserType.ARTIST)) {
             throw new UserRuntimeException("User is not an artist, can not get portfolio information!", HttpStatus.BAD_REQUEST);
@@ -147,13 +140,12 @@ public class ArtworkService {
 
         List<ArtworkDto> artworkDtoList = artworkDao.getArtworksOfArtist(artist.getArtistId());
 
-        List<GetArtworkDisplayDetailsResponse> responses = new ArrayList<>();
+        List<ArtworkDisplayDetails> responses = new ArrayList<>();
         artworkDtoList.forEach(e -> {
 
             List<String> filenames = fileDao.getArtworkFilenames(e.getArtworkId());
 
-            responses.add(
-                    GetArtworkDisplayDetailsResponse.builder().artworkDto(e).displayImage(fileService.getFile(filenames.get(0))).build());
+            responses.add(ArtworkDisplayDetails.builder().artworkDto(e).displayImage(fileService.getFile(filenames.get(0))).build());
 
         });
 
@@ -206,6 +198,24 @@ public class ArtworkService {
 
     public ArtworkSearchResponse getAllArtworks() {
         List<ArtworkDto> artworkDtos = artworkDao.getAllArtworks();
-        return ArtworkSearchResponse.builder().artworkDtos(artworkDtos).build();
+        return ArtworkSearchResponse.builder().artworkDtos(getArtworksDisplayDetailsFromDtos(artworkDtos)).build();
+    }
+
+    private ArtworkDisplayDetails getArtworkDisplayDetailsFromDto(ArtworkDto artworkDto) {
+        List<String> filenames = fileDao.getArtworkFilenames(artworkDto.getArtworkId());
+
+        return ArtworkDisplayDetails.builder().artworkDto(artworkDto).displayImage(fileService.getFile(filenames.get(0))).build();
+    }
+
+    private List<ArtworkDisplayDetails> getArtworksDisplayDetailsFromDtos(List<ArtworkDto> dtoList) {
+        List<ArtworkDisplayDetails> displayDetailsList = new ArrayList<>();
+        dtoList.forEach(e -> {
+            List<String> filenames = fileDao.getArtworkFilenames(e.getArtworkId());
+
+            displayDetailsList
+                    .add(ArtworkDisplayDetails.builder().artworkDto(e).displayImage(fileService.getFile(filenames.get(0))).build());
+        });
+
+        return displayDetailsList;
     }
 }

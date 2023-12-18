@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @lombok.Builder
-public class GetArtworkDisplayDetailsResponse {
+public class ArtworkDisplayDetails {
 
     private ArtworkDto artworkDto;
     private byte[] displayImage;
