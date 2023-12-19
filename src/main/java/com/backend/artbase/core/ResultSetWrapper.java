@@ -11,6 +11,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+
+import com.backend.artbase.errors.DatabaseRuntimeException;
+
 public final class ResultSetWrapper {
 
     private final ResultSet resultSet;
@@ -19,44 +23,83 @@ public final class ResultSetWrapper {
         this.resultSet = resultSet;
     }
 
-    public boolean isNull(String columnLabel) throws SQLException {
-        return resultSet.getObject(columnLabel) == null;
+    public boolean isNull(String columnName) {
+        try {
+            return resultSet.getObject(columnName) == null;
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
+        }
     }
 
-    public Long getLong(String columnLabel) throws SQLException {
-        return isNull(columnLabel) ? null : resultSet.getLong(columnLabel);
+    public Long getLong(String columnName) {
+        try {
+            return isNull(columnName) ? null : resultSet.getLong(columnName);
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
+        }
     }
 
-    public Integer getInteger(String columnLabel) throws SQLException {
-        return isNull(columnLabel) ? null : resultSet.getInt(columnLabel);
+    public Integer getInteger(String columnName) {
+        try {
+            return isNull(columnName) ? null : resultSet.getInt(columnName);
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
+        }
     }
 
-    public Double getDouble(String columnLabel) throws SQLException {
-        return isNull(columnLabel) ? null : resultSet.getDouble(columnLabel);
+    public Double getDouble(String columnName) {
+
+        try {
+            return isNull(columnName) ? null : resultSet.getDouble(columnName);
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
+        }
     }
 
-    public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
-        return isNull(columnLabel) ? null : resultSet.getBigDecimal(columnLabel);
+    public BigDecimal getBigDecimal(String columnName) {
+        try {
+            return isNull(columnName) ? null : resultSet.getBigDecimal(columnName);
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
+        }
     }
 
-    public String getString(String columnLabel) throws SQLException {
-        if (isNull(columnLabel)) {
-            return "";
+    public String getString(String columnName) {
+        try {
+
+            if (isNull(columnName)) {
+                return "";
+            }
+
+            if (resultSet.getObject(columnName) instanceof Clob) {
+                return getClob(columnName);
+            }
+
+            return resultSet.getString(columnName);
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
+        }
+    }
+
+    public String getClob(String columnName) {
+        try {
+            if (isNull(columnName)) {
+                return "";
+            }
+
+            return clobToString(resultSet.getClob(columnName));
+
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
         }
 
-        if (resultSet.getObject(columnLabel) instanceof Clob) {
-            return getClob(columnLabel);
-        }
-
-        return resultSet.getString(columnLabel);
-    }
-
-    public String getClob(String columnLabel) throws SQLException {
-        if (isNull(columnLabel)) {
-            return "";
-        }
-
-        return clobToString(resultSet.getClob(columnLabel));
     }
 
     private String clobToString(Clob clob) {
@@ -68,85 +111,136 @@ public final class ResultSetWrapper {
             return clob.getSubString(1, (int) clob.length());
         } catch (SQLException e) {
             System.out.println("SQL Error while converting clob to string");
-            return "";
+            throw new DatabaseRuntimeException("SQL Error while converting clob to string", HttpStatus.NOT_FOUND);
         }
     }
 
-    public LocalDate getLocalDate(String columnLabel) throws SQLException {
-        return isNull(columnLabel) ? null : resultSet.getDate(columnLabel).toLocalDate();
+    public LocalDate getLocalDate(String columnName) {
+        try {
+            return isNull(columnName) ? null : resultSet.getDate(columnName).toLocalDate();
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
+        }
     }
 
-    public LocalDateTime getLocalDateTime(String columnLabel) throws SQLException {
-        return isNull(columnLabel) ? null : resultSet.getTimestamp(columnLabel).toLocalDateTime();
+    public LocalDateTime getLocalDateTime(String columnName) {
+        try {
+            return isNull(columnName) ? null : resultSet.getTimestamp(columnName).toLocalDateTime();
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
+        }
     }
 
     /**
      * Kolon değeri null ise null döner, değil ise getBooleanTF methodu gibi
      * davranır.
      * 
-     * @param columnLabel
+     * @param columnName
      * @return
      * @throws SQLException
      */
-    public Boolean getBoolean(String columnLabel) throws SQLException {
-        return isNull(columnLabel) ? null : "T".equals(resultSet.getString(columnLabel));
+    public Boolean getBoolean(String columnName) {
+        try {
+            return isNull(columnName) ? null : "T".equals(resultSet.getString(columnName));
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
+        }
     }
 
     /**
      * Kolon değeri 'T' ise true döner, diğer durumlarda false döner.
      * 
-     * @param columnLabel
+     * @param columnName
      * @return
      * @throws SQLException
      */
-    public boolean getBooleanTF(String columnLabel) throws SQLException {
-        return "T".equals(resultSet.getString(columnLabel));
+    public boolean getBooleanTF(String columnName) {
+        try {
+            return "T".equals(resultSet.getString(columnName));
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
+        }
     }
 
     /***
      * Kolon değeri sıfırdan büyükse true döner, sıfır ve null ise false döner.
      *
-     * @param columnLabel
+     * @param columnName
      * @return
      * @throws SQLException
      */
-    public boolean getBoolean1v0(String columnLabel) throws SQLException {
-        if (isNull(columnLabel)) {
-            return false;
-        } else {
-            return (resultSet.getInt(columnLabel) > 0);
+    public boolean getBoolean1v0(String columnName) {
+        try {
+            if (isNull(columnName)) {
+                return false;
+            } else {
+                return (resultSet.getInt(columnName) > 0);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
         }
     }
 
-    public LocalTime getLocalTime(String columnLabel) throws SQLException {
-        return isNull(columnLabel) ? null : LocalTime.parse(resultSet.getString(columnLabel));
-    }
-
-    public boolean next() throws SQLException {
-        return resultSet.next();
-    }
-
-    public boolean hasColumn(String columnLabel) throws SQLException {
+    public LocalTime getLocalTime(String columnName) {
         try {
-            return resultSet.findColumn(columnLabel) > -1;
+            return isNull(columnName) ? null : LocalTime.parse(resultSet.getString(columnName));
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
+        }
+    }
+
+    public boolean next() {
+        try {
+            return resultSet.next();
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("SQL Error  " + e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
+
+        }
+    }
+
+    public boolean hasColumn(String columnName) {
+        try {
+            return resultSet.findColumn(columnName) > -1;
         } catch (SQLException e) {
             return false;
         }
     }
 
-    public String getColumnName(Integer columnIndex) throws SQLException {
+    public String getColumnName(Integer columnIndex) {
 
-        return resultSet.getMetaData().getColumnLabel(columnIndex);
+        try {
+            return resultSet.getMetaData().getColumnLabel(columnIndex);
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given index can't found " + columnIndex, HttpStatus.NOT_FOUND);
+
+        }
     }
 
-    public List<String> getStringList(String columnLabel, String splitRegex) throws SQLException {
+    public List<String> getStringList(String columnName, String splitRegex) {
 
-        return isNull(columnLabel) ? Collections.emptyList() : Arrays.asList(resultSet.getString(columnLabel).split(splitRegex));
+        try {
+            return isNull(columnName) ? Collections.emptyList() : Arrays.asList(resultSet.getString(columnName).split(splitRegex));
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
+        }
     }
 
-    public Character getCharacter(String columnName) throws SQLException {
-        String result = resultSet.getString(columnName);
-        return (result != null && !result.isEmpty()) ? result.charAt(0) : null;
+    public Character getCharacter(String columnName) {
+        String result;
+        try {
+            result = resultSet.getString(columnName);
+            return (result != null && !result.isEmpty()) ? result.charAt(0) : null;
+        } catch (SQLException e) {
+            throw new DatabaseRuntimeException("Column with given name is not found in SQL query: " + columnName, HttpStatus.NOT_FOUND);
+
+        }
     }
 
 }
