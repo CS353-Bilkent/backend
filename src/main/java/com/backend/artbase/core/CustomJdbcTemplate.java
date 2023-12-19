@@ -5,12 +5,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterUtils;
 import org.springframework.stereotype.Component;
+
+import com.backend.artbase.errors.BaseRuntimeException;
 
 @Component
 public class CustomJdbcTemplate {
@@ -32,7 +35,7 @@ public class CustomJdbcTemplate {
             return namedParameterJdbcTemplate.query(sql, params.getParams(), rowMapper);
         } catch (RuntimeException e) {
             System.out.println("Query runtime exception. SQL: " + sql);
-            throw e;
+            throw new BaseRuntimeException("Error: " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -55,7 +58,7 @@ public class CustomJdbcTemplate {
             throw e;
         } catch (RuntimeException e) {
             System.out.println("Query for object runtime exception. SQL: " + sql);
-            throw e;
+            throw new BaseRuntimeException("Error: " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -73,7 +76,7 @@ public class CustomJdbcTemplate {
             return namedParameterJdbcTemplate.update(sql, params.getParams());
         } catch (RuntimeException e) {
             System.out.println("Query for object runtime exception. SQL: " + sql);
-            throw e;
+            throw new BaseRuntimeException("Error: " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

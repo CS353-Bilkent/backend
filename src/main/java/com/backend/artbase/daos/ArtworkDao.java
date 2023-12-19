@@ -353,7 +353,7 @@ public class ArtworkDao {
                     .gender(rsw.getString("gender"))
                     .nationality(rsw.getString("nationality"))
                     .age(rsw.getInteger("age"))
-                    .speciality(rsw.getString("specialty"))
+                    .speciality(rsw.getString("speciality"))
                     .build();
             //@formatter:on
         });
@@ -402,7 +402,7 @@ public class ArtworkDao {
                     .gender(rsw.getString("gender"))
                     .nationality(rsw.getString("nationality"))
                     .age(rsw.getInteger("age"))
-                    .speciality(rsw.getString("specialty"))
+                    .speciality(rsw.getString("speciality"))
                     .build();
             //@formatter:on
         });
@@ -466,7 +466,7 @@ public class ArtworkDao {
                     .gender(rsw.getString("gender"))
                     .nationality(rsw.getString("nationality"))
                     .age(rsw.getInteger("age"))
-                    .speciality(rsw.getString("specialty"))
+                    .speciality(rsw.getString("speciality"))
                     .build();
             //@formatter:on
         });
@@ -530,7 +530,7 @@ public class ArtworkDao {
                     .gender(rsw.getString("gender"))
                     .nationality(rsw.getString("nationality"))
                     .age(rsw.getInteger("age"))
-                    .speciality(rsw.getString("specialty"))
+                    .speciality(rsw.getString("speciality"))
                     .build();
             //@formatter:on
         });
@@ -701,7 +701,15 @@ public class ArtworkDao {
     public List<ArtworkDto> getAllArtworks() {
 
         CustomSqlParameters params = CustomSqlParameters.create();
-        String sql = "SELECT * FROM artist";
+        //@formatter:off
+        String sql =
+                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
+                        "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
+                        "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
+                        "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
+                        "FROM artwork a, artist b " +
+                        "WHERE a.artist_id = b.artist_id";
+        //@formatter:on
 
         return jdbcTemplate.query(sql, params, (rs, rnum) -> {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
@@ -730,7 +738,7 @@ public class ArtworkDao {
                     .gender(rsw.getString("gender"))
                     .nationality(rsw.getString("nationality"))
                     .age(rsw.getInteger("age"))
-                    .speciality(rsw.getString("specialty"))
+                    .speciality(rsw.getString("speciality"))
                     .build();
             //@formatter:on
         });
