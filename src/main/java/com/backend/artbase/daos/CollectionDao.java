@@ -59,7 +59,7 @@ public class CollectionDao {
         //@formatter:off
         String collectionSql =
             "SELECT ac.artwork_collection_id, ac.artwork_collection_name, ac.artwork_collection_description, ac.creator_id " +
-            "FROM artwork_collection ac WHERE ac.artwork_collection_id = :collection_id";
+            "FROM artwork_collection ac ";
         //@formatter:on
 
         // Retrieve collection information
