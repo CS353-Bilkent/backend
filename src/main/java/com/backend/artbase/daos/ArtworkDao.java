@@ -633,7 +633,7 @@ public class ArtworkDao {
 
         //@formatter:off
         String sql =
-                "SELECT COUNT(*) AS count" +
+                "SELECT COUNT(*) AS count " +
                         "FROM artwork " +
                         "WHERE artwork_id = :artwork_id";
         //@formatter:on

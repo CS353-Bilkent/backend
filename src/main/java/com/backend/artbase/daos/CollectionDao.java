@@ -177,11 +177,11 @@ public class CollectionDao {
     }
 
     public void addArtworksToCollection(Integer collectionId, List<Integer> newArtworkIds) {
-        CustomSqlParameters params = CustomSqlParameters.create();
-        params.put("collection_id", collectionId);
 
         try {
             for (Integer artworkId : newArtworkIds) {
+                CustomSqlParameters params = CustomSqlParameters.create();
+                params.put("collection_id", collectionId);
                 params.put("artwork_id", artworkId);
 
                 //@formatter:off
