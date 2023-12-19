@@ -27,6 +27,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequiredArgsConstructor
@@ -148,4 +150,10 @@ public class ArtworkController {
         return ResponseEntity.ok(ApiResponse.<ArtworkSearchResponse>builder()
                 .operationResultData(artworkService.filterSearchArtwork(searchKey, filters)).build());
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<ArtworkSearchResponse>> getAll() {
+        return ResponseEntity.ok(ApiResponse.<ArtworkSearchResponse>builder().operationResultData(artworkService.getAllArtworks()).build());
+    }
+
 }
