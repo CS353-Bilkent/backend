@@ -580,53 +580,6 @@ public class ArtworkDao {
         });
     }
 
-    public ArtworkDto getArtwork(Integer artworkId) {
-
-        CustomSqlParameters params = CustomSqlParameters.create();
-        params.put("artwork_id", artworkId);
-
-        //@formatter:off
-        String sql =
-                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
-                        "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
-                        "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
-                        "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
-                        "FROM artwork a, artist b " +
-                        "WHERE a.artwork_id = :artwork_id AND a.artist_id = b.artist_id";
-        //@formatter:on
-        return jdbcTemplate.queryForObject(sql, params, (rs, rnum) -> {
-            ResultSetWrapper rsw = new ResultSetWrapper(rs);
-
-            //@formatter:off
-            return ArtworkDto.builder()
-                    .artworkName(rsw.getString("artwork_name"))
-                    .userId(rsw.getInteger("user_id"))
-                    .artistId(rsw.getInteger("artist_id"))
-                    .artworkId(rsw.getInteger("artwork_id"))
-                    .fixedPrice(rsw.getDouble("fixed_price"))
-                    .artworkTypeId(rsw.getInteger("artwork_type_id"))
-                    .timePeriod(rsw.getString("time_period"))
-                    .rarityId(rsw.getInteger("rarity_id"))
-                    .mediumId(rsw.getInteger("medium_id"))
-                    .sizeX(rsw.getDouble("size_x"))
-                    .sizeY(rsw.getDouble("size_y"))
-                    .sizeZ(rsw.getDouble("size_z"))
-                    .materialId(rsw.getInteger("material_id"))
-                    .artworkLocation(rsw.getString("artwork_location"))
-                    .artMovementId(rsw.getInteger("art_movement_id"))
-                    .acquisitionWay(rsw.getString("acquisition_way"))
-                    .artworkDescription(rsw.getString("artwork_description"))
-                    .artworkStatus(ArtworkStatus.fromCode(rsw.getString("artwork_status")))
-                    .artistName(rsw.getString("artist_name"))
-                    .gender(rsw.getString("gender"))
-                    .nationality(rsw.getString("nationality"))
-                    .age(rsw.getInteger("age"))
-                    .speciality(rsw.getString("speciality"))
-                    .build();
-            //@formatter:on
-        });
-    }
-
     public Boolean isArtworkValid(Integer artworkId) {
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("artwork_id", artworkId);

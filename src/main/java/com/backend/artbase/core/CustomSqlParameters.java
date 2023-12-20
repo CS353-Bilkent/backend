@@ -65,10 +65,6 @@ public final class CustomSqlParameters {
         params.addValue(name, JdbcUtils.convert(value));
     }
 
-    public void put(String name, LocalTime value) {
-        params.addValue(name, JdbcUtils.convert(value));
-    }
-
     public void put(String name, Boolean value) {
         if (value != null) {
             params.addValue(name, value);

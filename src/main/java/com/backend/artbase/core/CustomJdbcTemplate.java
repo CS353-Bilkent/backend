@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterUtils;
 import org.springframework.stereotype.Component;
 
 import com.backend.artbase.errors.BaseRuntimeException;
+import com.backend.artbase.errors.DatabaseRuntimeException;
 
 @Component
 public class CustomJdbcTemplate {
@@ -58,7 +59,7 @@ public class CustomJdbcTemplate {
             throw e;
         } catch (RuntimeException e) {
             System.out.println("Query for object runtime exception. SQL: " + sql);
-            throw new BaseRuntimeException("Error: " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new DatabaseRuntimeException("Error: " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -76,7 +77,7 @@ public class CustomJdbcTemplate {
             return namedParameterJdbcTemplate.update(sql, params.getParams());
         } catch (RuntimeException e) {
             System.out.println("Query for object runtime exception. SQL: " + sql);
-            throw new BaseRuntimeException("Error: " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new DatabaseRuntimeException("Error: " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
