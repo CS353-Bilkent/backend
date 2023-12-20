@@ -108,7 +108,7 @@ public class ArtworkDao {
                         "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
                         "a.artwork_description, a.artwork_status, " +
                         "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
-                        "FROM artwork a, artist b WHERE a.artwork_id = :artwork_id";
+                        "FROM artwork a, artist b WHERE a.artwork_id = :artwork_id AND a.artist_id = b.artist_id";
         //@formatter:on
 
         try {
