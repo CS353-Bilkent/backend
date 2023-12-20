@@ -9,7 +9,7 @@ import lombok.Setter;
 @Builder
 public class Notification {
 
-    private Integer artistId;
+    private Integer userId;
 
     private Integer notificationId;
 
