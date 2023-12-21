@@ -17,7 +17,7 @@ public class WorkshopDao {
     }
 
     public List<WorkshopDto> findAll() {
-        String sql = "SELECT * FROM workshops";
+        String sql = "SELECT * FROM workshop";
         return jdbcTemplate.query(sql, (rs, rowNum) -> WorkshopDto.builder()
                 .workshopId(rs.getInt("workshop_id"))
                 .artistId(rs.getInt("artist_id"))
