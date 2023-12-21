@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -47,5 +49,15 @@ public class BidService {
 
         bid.setBidStatus(false);
         return bidDao.save(bid);
+    }
+
+    public Long makeBid(BigDecimal amount, User user, Integer auctionId) {
+
+        Long bidId = bidDao.getNextBidId();
+
+        Bid bid = Bid.builder().auctionId(auctionId).userId(user.getUserId()).bidAmount(amount).bidId(bidId).bidTime(LocalDateTime.now())
+                .build();
+        bidDao.makeBid(bid);
+        return bidId;
     }
 }

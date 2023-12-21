@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -65,22 +66,14 @@ public class BidDao {
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("artwork_id", artworkId);
 
-        String sql = 
-            "SELECT b.bid_id, b.auction_id, b.user_id, b.bid_amount, b.bid_status, b.bid_time " +
-            "FROM bid b " +
-            "JOIN auction a ON b.auction_id = a.auction_id " +
-            "WHERE a.artwork_id = :artwork_id";
+        String sql = "SELECT b.bid_id, b.auction_id, b.user_id, b.bid_amount, b.bid_status, b.bid_time " + "FROM bid b "
+                + "JOIN auction a ON b.auction_id = a.auction_id " + "WHERE a.artwork_id = :artwork_id";
 
         try {
             return jdbcTemplate.query(sql, params, (rs, rowNum) -> {
                 ResultSetWrapper rsw = new ResultSetWrapper(rs);
-                return Bid.builder()
-                    .bidId(rsw.getLong("bid_id"))
-                    .auctionId(rsw.getInteger("auction_id"))
-                    .userId(rsw.getInteger("user_id"))
-                    .bidAmount(rsw.getBigDecimal("bid_amount"))
-                    .bidTime(rsw.getLocalDateTime("bid_time"))
-                    .build();
+                return Bid.builder().bidId(rsw.getLong("bid_id")).auctionId(rsw.getInteger("auction_id")).userId(rsw.getInteger("user_id"))
+                        .bidAmount(rsw.getBigDecimal("bid_amount")).bidTime(rsw.getLocalDateTime("bid_time")).build();
             });
         } catch (EmptyResultDataAccessException e) {
             return new ArrayList<>();
@@ -96,7 +89,35 @@ public class BidDao {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
             return rsw.getInteger("user_id");
         });
-            
+
+    }
+
+    public Long getNextBidId() {
+        String sql = "SELECT nextval('bid_bid_id_seq') AS next_bid_id";
+
+        CustomSqlParameters params = CustomSqlParameters.create();
+
+        return jdbcTemplate.queryForObject(sql, params, (rs, rnum) -> {
+            ResultSetWrapper rsw = new ResultSetWrapper(rs);
+            return rsw.getLong("next_bid_id");
+        });
+    }
+
+    public void makeBid(Bid bid) {
+
+        CustomSqlParameters params = CustomSqlParameters.create();
+        params.put("bid_id", bid.getBidId());
+        params.put("auction_id", bid.getAuctionId());
+        params.put("user_id", bid.getUserId());
+        params.put("bid_amount", bid.getBidAmount());
+        params.put("bid_time", bid.getBidTime());
+
+        //@formatter:off
+        String sql = "INSERT INTO bid(bid_id, auction_id, user_id, bid_amount, bid_time)"
+                     + " VALUES (:bid_id, :auction_id, :user_id, :bid_amount, :bid_time)";
+        //@formatter:on
+
+        jdbcTemplate.update(sql, params);
 
     }
 }

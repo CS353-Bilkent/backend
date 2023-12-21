@@ -159,7 +159,7 @@ public class ArtworkDao {
                         "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
                         "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
                         "FROM artwork a, artist b " +
-                        "WHERE a.artist_id = :artist_id";
+                        "WHERE a.artist_id = :artist_id AND a.artist_id = b.artist_id";
         //@formatter:on
 
         return jdbcTemplate.query(sql, params, (rs, rnum) -> {
@@ -210,7 +210,7 @@ public class ArtworkDao {
                         "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
                         "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
                         "FROM artwork a, artist b" +
-                        "WHERE (:medium_ids IS NULL OR a.medium_id IN (SELECT * FROM STRING_TO_TABLE(:medium_ids, ','))) " +
+                        "WHERE (:medium_ids IS NULL OR a.medium_id IN (SELECT * FROM STRING_TO_TABLE(:medium_ids, ',')))" +
                         "OR (:material_ids IS NULL OR a.material_id IN (SELECT * FROM STRING_TO_TABLE(:material_ids, ','))) " +
                         "OR (:rarity_ids IS NULL OR a.rarity_id IN (SELECT * FROM STRING_TO_TABLE(:rarity_ids, ','))) " +
                         "OR (:artwork_type_ids IS NULL OR a.artwork_type_id IN (SELECT * FROM STRING_TO_TABLE(:artwork_type_ids, ','))) " +
@@ -271,6 +271,7 @@ public class ArtworkDao {
                         "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
                         "FROM artwork a, artist b " +
                         "WHERE (:medium_ids IS NULL OR a.medium_id IN (SELECT * FROM STRING_TO_TABLE(:medium_ids, ','))) " +
+                        "a.artist_id = b.artist_id " +
                         "AND (:material_ids IS NULL OR a.material_id IN (SELECT * FROM STRING_TO_TABLE(:material_ids, ','))) " +
                         "AND (:rarity_ids IS NULL OR a.rarity_id IN (SELECT * FROM STRING_TO_TABLE(:rarity_ids, ','))) " +
                         "AND (:artwork_type_ids IS NULL OR a.artwork_type_id IN (SELECT * FROM STRING_TO_TABLE(:artwork_type_ids, ','))) ";
@@ -323,7 +324,7 @@ public class ArtworkDao {
                         "a.art_movement_id, a.acquisition_way, a.artwork_description, a.artwork_status, " +
                         "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
                         "FROM artwork a, artist b " +
-                        "WHERE a.artwork_name LIKE CONCAT('%',:search_key,'%')";
+                        "WHERE a.artwork_name LIKE CONCAT('%',:search_key,'%') AND a.artist_id = b.artist_id";
         //@formatter:on
 
         return jdbcTemplate.query(sql, params, (rs, rnum) -> {
@@ -372,7 +373,7 @@ public class ArtworkDao {
                         "a.art_movement_id, a.acquisition_way, a.artwork_description, a.artwork_status, " +
                         "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
                         "FROM artwork a, artist b " +
-                        "WHERE a.artwork_description LIKE CONCAT('%',:search_key,'%')";
+                        "WHERE a.artwork_description LIKE CONCAT('%',:search_key,'%') AND a.artist_id = b.artist_id";
         //@formatter:on
 
         return jdbcTemplate.query(sql, params, (rs, rnum) -> {
@@ -426,7 +427,7 @@ public class ArtworkDao {
                         "a.art_movement_id, a.acquisition_way, a.artwork_description, a.artwork_status, " +
                         "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
                         "FROM artwork a, artist b " +
-                        "WHERE a.artwork_name LIKE CONCAT('%',:search_key,'%')) " +
+                        "WHERE a.artwork_name LIKE CONCAT('%',:search_key,'%') AND a.artist_id = b.artist_id )  " +
                         "SELECT a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
                         "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
                         "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +
@@ -490,7 +491,7 @@ public class ArtworkDao {
                         "a.art_movement_id, a.acquisition_way, a.artwork_description, a.artwork_status, " +
                         "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
                         "FROM artwork a, artist b " +
-                        "WHERE a.artwork_description LIKE CONCAT('%',:search_key,'%')) " +
+                        "WHERE a.artwork_description LIKE CONCAT('%',:search_key,'%') a.artist_id = b.artist_id) " +
                         "SELECT a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_id, " +
                         "a.time_period, a.rarity_id, a.medium_id, a.size_x, a.size_y, a.size_z, " +
                         "a.material_id, a.artwork_location, a.art_movement_id, a.acquisition_way, " +

@@ -18,8 +18,6 @@ public class NotificationDao {
 
     private final CustomJdbcTemplate jdbcTemplate;
 
-    // Other dependencies...
-
     public List<Notification> getNotificationsByUserId(Integer userId) {
 
         CustomSqlParameters params = CustomSqlParameters.create();
