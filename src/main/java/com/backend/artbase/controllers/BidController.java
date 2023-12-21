@@ -1,5 +1,6 @@
 package com.backend.artbase.controllers;
 
+import com.backend.artbase.dtos.bid.BidRequest;
 import com.backend.artbase.entities.ApiResponse;
 import com.backend.artbase.entities.Bid;
 import com.backend.artbase.entities.User;
@@ -44,9 +45,10 @@ public class BidController {
     }
 
     @PostMapping("/{auctionId}")
-    public ResponseEntity<ApiResponse<Long>> makeBid(@PathVariable Integer auctionId, @RequestBody BigDecimal amount,
+    public ResponseEntity<ApiResponse<Long>> makeBid(@PathVariable Integer auctionId, @RequestBody BidRequest bidRequest,
             HttpServletRequest request) {
+        System.out.println("bid" + bidRequest);
         User user = (User) request.getAttribute("user");
-        return ResponseEntity.ok(ApiResponse.<Long>builder().operationResultData(bidService.makeBid(amount, user, auctionId)).build());
+        return ResponseEntity.ok(ApiResponse.<Long>builder().operationResultData(bidService.makeBid(bidRequest.getAmount(), user, auctionId)).build());
     }
 }
