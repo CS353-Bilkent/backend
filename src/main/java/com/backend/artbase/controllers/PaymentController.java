@@ -24,10 +24,10 @@ public class PaymentController {
         }
     }
 
-    @PutMapping("/reject/{bidId}")
-    public ResponseEntity<?> rejectPayment(@PathVariable Integer bidId) {
+    @PutMapping("/reject/{paymentId}")
+    public ResponseEntity<?> rejectPayment(@PathVariable Integer paymentId) {
         try {
-            Payment payment = paymentService.rejectPayment(bidId);
+            Payment payment = paymentService.rejectPayment(paymentId);
             return ResponseEntity.ok(payment);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
