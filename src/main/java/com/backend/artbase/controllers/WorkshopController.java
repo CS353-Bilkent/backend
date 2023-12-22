@@ -2,6 +2,7 @@ package com.backend.artbase.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +39,13 @@ public class WorkshopController {
         User user = (User) request.getAttribute("user");
         return ResponseEntity
                 .ok(ApiResponse.<Integer>builder().operationResultData(workshopService.createWorkshop(createReq, user)).build());
+    }
+
+    @PostMapping("/participate/{workshopId}")
+    public ResponseEntity<?> participateWorkshop(@PathVariable Integer workshopId, HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+        workshopService.participateToWorkshop(workshopId, user);
+        return ResponseEntity.ok(1);
     }
 
     @GetMapping("/organized")

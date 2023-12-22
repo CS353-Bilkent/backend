@@ -50,4 +50,8 @@ public class WorkshopService {
         return workshopDao.getParticipatedWorkshops(user.getUserId());
     }
 
+    public void participateToWorkshop(Integer workshopId, User user) {
+        workshopDao.participateToWorkshop(user.getUserId(), workshopId);
+    }
+
 }
