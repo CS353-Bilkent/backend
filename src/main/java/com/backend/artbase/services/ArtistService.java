@@ -25,11 +25,23 @@ public class ArtistService {
     private final ArtistDao artistDao;
 
     public Artist getArtistByArtistId(Integer artistId) {
-        return null;
+        Optional<Artist> opARtist = artistDao.getByArtistId(artistId);
+
+        if (opARtist.isEmpty()) {
+            throw new ArtistRuntimeException("Artist not found for id " + artistId, HttpStatus.NOT_FOUND);
+        }
+
+        return opARtist.get();
     }
 
     public Artist getArtistByUserId(Integer userId) {
-        return null;
+        Optional<Artist> opARtist = artistDao.getByUserId(userId);
+
+        if (opARtist.isEmpty()) {
+            throw new ArtistRuntimeException("Artist not found for user id " + userId, HttpStatus.NOT_FOUND);
+        }
+
+        return opARtist.get();
     }
 
     public Integer createArtist(CreateArtistRequest request, User user) {
