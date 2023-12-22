@@ -42,8 +42,6 @@ public class ArtworkController {
     public ResponseEntity<ApiResponse<UploadArtworkResponse>> saveArtwork(
             @RequestPart(name = "image") MultipartFile image,
             @RequestPart(name = "name") String artworkName,
-            @RequestPart(name = "userId") Integer userId,
-            @RequestPart(name = "artistId") Integer artistId,
             @RequestPart(name = "fixedPrice", required = false) Double fixedPrice,
             @RequestPart(name = "artworkTypeId") Integer artworkTypeId,
             @RequestPart(name = "timePeriod", required = false) String timePeriod,
@@ -56,12 +54,14 @@ public class ArtworkController {
             @RequestPart(name = "artworkLocation", required = false) String artworkLocation,
             @RequestPart(name = "artMovementId") Integer artMovementId,
             @RequestPart(name = "acquisitionWay") String acquisitionWay,
-            @RequestPart(name = "artworkDescription", required = false) String artworkDescription
+            @RequestPart(name = "artworkDescription", required = false) String artworkDescription,
+            HttpServletRequest request
     ) {
         //@formatter:on
         try {
 
-            Artwork artwork = Artwork.builder().userId(userId).artistId(artistId).artworkName(artworkName).fixedPrice(fixedPrice)
+            User user = (User) request.getAttribute("user");
+            Artwork artwork = Artwork.builder().userId(user.getUserId()).artworkName(artworkName).fixedPrice(fixedPrice)
                     .artworkTypeId(artworkTypeId).timePeriod(timePeriod).rarityId(rarityId).mediumId(mediumId).sizeX(sizeX).sizeY(sizeY)
                     .sizeZ(sizeZ).materialId(materialId).artworkLocation(artworkLocation).artMovementId(artMovementId)
                     .acquisitionWay(acquisitionWay).artworkDescription(artworkDescription).build();

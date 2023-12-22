@@ -17,7 +17,6 @@ public class Artwork {
     @NonNull
     private Integer userId;
 
-    @NonNull
     private Integer artistId;
 
     private Integer artworkId;

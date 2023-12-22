@@ -44,6 +44,13 @@ public class ArtworkService {
 
     public UploadArtworkResponse saveArtwork(Artwork artwork, MultipartFile image) {
 
+        Optional<Artist> optArtist = artistDao.getByUserId(artwork.getUserId());
+
+        if (optArtist.isEmpty()) {
+            throw new ArtistRuntimeException("Artist not found!", HttpStatus.NOT_FOUND);
+        }
+
+        artwork.setArtistId(optArtist.get().getArtistId());
         Integer artworkId = artworkDao.getNextArtworkId();
         artwork.setArtworkId(artworkId);
         artworkDao.saveArtwork(artwork);
@@ -146,7 +153,7 @@ public class ArtworkService {
 
     public void updateArtworkDescription(Integer artworkId, String newDescription) {
         Artwork artwork = artworkDao.getArtworkByArtworkId(artworkId);
-        if(artwork == null) {
+        if (artwork == null) {
             throw new ArtworkException("Artwork not found", HttpStatus.NOT_FOUND);
         }
         artwork.setArtworkDescription(newDescription);
