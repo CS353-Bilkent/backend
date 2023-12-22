@@ -103,14 +103,13 @@ public class ArtworkDao {
 
         //@formatter:off
         String sql =
-                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, g.artwork_type_name, " +
-                        "a.time_period, f.rarity_name, e.medium_name, a.size_x, a.size_y, a.size_z, " +
-                        "d.material_name, a.artwork_location, c.art_movement_name, a.acquisition_way, " +
+                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, c.artwork_type_name, " +
+                        "a.time_period, c.rarity_name, c.medium_name, a.size_x, a.size_y, a.size_z, " +
+                        "c.material_name, a.artwork_location, c.art_movement_name, a.acquisition_way, " +
                         "a.artwork_description, a.artwork_status, " +
                         "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
-                        "FROM artwork a, artist b, art_movement c, material d, medium e, rarity f, artwork_type g " +
-                        "WHERE a.artwork_id = :artwork_id AND a.artist_id = b.artist_id AND a.art_movement_id = c.art_movement_id " +
-                        "AND a.material_id = d.material_id AND a.medium_id = e.medium_id AND a.rarity_id = f.rarity_id AND a.artwork_type_id = g.artwork_type_id";
+                        "FROM artwork a, artist b, artwork_details c " +
+                        "WHERE a.artwork_id = :artwork_id AND a.artist_id = b.artist_id AND a.artwork_id = c.artwork_id";
         //@formatter:on
 
         try {
@@ -156,13 +155,12 @@ public class ArtworkDao {
 
         //@formatter:off
         String sql =
-                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, g.artwork_type_name, " +
-                        "a.time_period, f.rarity_name, e.medium_name, a.size_x, a.size_y, a.size_z, " +
-                        "d.material_name, a.artwork_location, c.art_movement_name, a.acquisition_way, " +
+                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, c.artwork_type_name, " +
+                        "a.time_period, c.rarity_name, c.medium_name, a.size_x, a.size_y, a.size_z, " +
+                        "c.material_name, a.artwork_location, c.art_movement_name, a.acquisition_way, " +
                         "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
-                        "FROM artwork a, artist b, art_movement c, material d, medium e, rarity f, artwork_type g " +
-                        "WHERE a.artwork_id = :artwork_id AND a.artist_id = b.artist_id AND a.art_movement_id = c.art_movement_id" +
-                        "AND a.material_id = d.material_id AND a.medium_id = e.medium_id AND a.rarity_id = f.rarity_id AND a.artwork_type_id = g.artwork_type_id";
+                        "FROM artwork a, artist b, artwork_details c " +
+                        "WHERE a.artwork_id = :artwork_id AND a.artist_id = b.artist_id AND a.artwork_id = c.artwork_id";
         //@formatter:on
 
         return jdbcTemplate.query(sql, params, (rs, rnum) -> {
@@ -208,13 +206,12 @@ public class ArtworkDao {
 
         //@formatter:off
         String sql =
-                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, g.artwork_type_name, " +
-                        "a.time_period, f.rarity_name, e.medium_name, a.size_x, a.size_y, a.size_z, " +
-                        "d.material_name, a.artwork_location, c.art_movement_name, a.acquisition_way, " +
+                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, c.artwork_type_name, " +
+                        "a.time_period, c.rarity_name, c.medium_name, a.size_x, a.size_y, a.size_z, " +
+                        "c.material_name, a.artwork_location, c.art_movement_name, a.acquisition_way, " +
                         "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
-                        "FROM artwork a, artist b, art_movement c, material d, medium e, rarity f, artwork_type g " +
-                        "WHERE a.artist_id = b.artist_id AND a.art_movement_id = c.art_movement_id " +
-                        "AND a.material_id = d.material_id AND a.medium_id = e.medium_id AND a.rarity_id = f.rarity_id AND a.artwork_type_id = g.artwork_type_id " +
+                        "FROM artwork a, artist b, artwork_details c " +
+                        "WHERE a.artist_id = b.artist_id AND a.artwork_id = c.artwork_id " +
                         "OR (:medium_ids IS NULL OR a.medium_id IN (SELECT * FROM STRING_TO_TABLE(:medium_ids, ','))) " +
                         "OR (:material_ids IS NULL OR a.material_id IN (SELECT * FROM STRING_TO_TABLE(:material_ids, ','))) " +
                         "OR (:rarity_ids IS NULL OR a.rarity_id IN (SELECT * FROM STRING_TO_TABLE(:rarity_ids, ','))) " +
@@ -270,13 +267,12 @@ public class ArtworkDao {
 
         //@formatter:off
         String sql =
-                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, g.artwork_type_name, " +
-                        "a.time_period, f.rarity_name, e.medium_name, a.size_x, a.size_y, a.size_z, " +
-                        "d.material_name, a.artwork_location, c.art_movement_name, a.acquisition_way, " +
+                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, c.artwork_type_name, " +
+                        "a.time_period, c.rarity_name, c.medium_name, a.size_x, a.size_y, a.size_z, " +
+                        "c.material_name, a.artwork_location, c.art_movement_name, a.acquisition_way, " +
                         "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
-                        "FROM artwork a, artist b, art_movement c, material d, medium e, rarity f, artwork_type g " +
-                        "WHERE a.artist_id = b.artist_id AND a.artwork_type_id = g.artwork_type_id AND a.art_movement_id = c.art_movement_id" +
-                        "AND a.material_id = d.material_id AND a.medium_id = e.medium_id AND a.rarity_id = f.rarity_id " +
+                        "FROM artwork a, artist b, artwork_details c " +
+                        "WHERE a.artist_id = b.artist_id AND a.artwork_id = c.artwork_id " +
                         "AND (:medium_ids IS NULL OR a.medium_id IN (SELECT * FROM STRING_TO_TABLE(:medium_ids, ','))) " +
                         "AND (:material_ids IS NULL OR a.material_id IN (SELECT * FROM STRING_TO_TABLE(:material_ids, ','))) " +
                         "AND (:rarity_ids IS NULL OR a.rarity_id IN (SELECT * FROM STRING_TO_TABLE(:rarity_ids, ','))) " +
@@ -325,11 +321,11 @@ public class ArtworkDao {
         //@formatter:off
         String sql =
                 "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price," +
-                        "g.artwork_type_name, a.time_period, f.rarity_name, e.medium_name, " +
-                        "a.size_x, a.size_y, a.size_z, d.material_name, a.artwork_location, " +
+                        "c.artwork_type_name, a.time_period, c.rarity_name, c.medium_name, " +
+                        "a.size_x, a.size_y, a.size_z, c.material_name, a.artwork_location, " +
                         "c.art_movement_name, a.acquisition_way, a.artwork_description, a.artwork_status, " +
                         "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
-                        "FROM artwork a, artist b, art_movement c, material d, medium e, rarity f, artwork_type g " +
+                        "FROM artwork a, artist b, artwork_details c " +
                         "WHERE a.artist_id = b.artist_id AND a.artwork_type_id = g.artwork_type_id AND a.art_movement_id = c.art_movement_id" +
                         "AND a.material_id = d.material_id AND a.medium_id = e.medium_id AND a.rarity_id = f.rarity_id " +
                         "AND a.artwork_name LIKE CONCAT('%',:search_key,'%')";
@@ -376,13 +372,12 @@ public class ArtworkDao {
         //@formatter:off
         String sql =
                 "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, " +
-                        "g.artwork_type_name, a.time_period, f.rarity_name, e.medium_name, " +
-                        "a.size_x, a.size_y, a.size_z, d.material_name, a.artwork_location, " +
+                        "c.artwork_type_name, a.time_period, c.rarity_name, c.medium_name, " +
+                        "a.size_x, a.size_y, a.size_z, c.material_name, a.artwork_location, " +
                         "c.art_movement_name, a.acquisition_way, a.artwork_description, a.artwork_status, " +
                         "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
-                        "FROM artwork a, artist b, art_movement c, material d, medium e, rarity f, artwork_type g " +
-                        "WHERE a.artist_id = b.artist_id AND a.artwork_type_id = g.artwork_type_id AND a.art_movement_id = c.art_movement_id " +
-                        "AND a.material_id = d.material_id AND a.medium_id = e.medium_id AND a.rarity_id = f.rarity_id " +
+                        "FROM artwork a, artist b, artwork_details c " +
+                        "WHERE a.artist_id = b.artist_id AND a.artwork_id = c.artwork_id " +
                         "AND a.artwork_description LIKE CONCAT('%',:search_key,'%')";
         //@formatter:on
 
@@ -432,13 +427,12 @@ public class ArtworkDao {
         String sql =
                 "WITH temp_table as" +
                         "(SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price," +
-                        "g.artwork_type_name, a.time_period, f.rarity_name, e.medium_name, " +
-                        "a.size_x, a.size_y, a.size_z, d.material_name, a.artwork_location, " +
+                        "c.artwork_type_name, a.time_period, c.rarity_name, c.medium_name, " +
+                        "a.size_x, a.size_y, a.size_z, c.material_name, a.artwork_location, " +
                         "c.art_movement_name, a.acquisition_way, a.artwork_description, a.artwork_status, " +
                         "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
-                        "FROM artwork a, artist b, art_movement c, material d, medium e, rarity f, artwork_type g " +
-                        "WHERE a.artist_id = b.artist_id AND a.artwork_type_id = g.artwork_type_id AND a.art_movement_id = c.art_movement_id " +
-                        "AND a.material_id = d.material_id AND a.medium_id = e.medium_id AND a.rarity_id = f.rarity_id " +
+                        "FROM artwork a, artist b, artwork_details c " +
+                        "WHERE a.artist_id = b.artist_id AND a.artwork_id = c.artwork_id " +
                         "AND a.artwork_name LIKE CONCAT('%',:search_key,'%')) " +
                         "SELECT a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_name, " +
                         "a.time_period, a.rarity_name, a.medium_name, a.size_x, a.size_y, a.size_z, " +
@@ -498,13 +492,12 @@ public class ArtworkDao {
         String sql =
                 "WITH temp_table as" +
                         "(SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price," +
-                        "g.artwork_type_name, a.time_period, f.rarity_name, e.medium_name, " +
-                        "a.size_x, a.size_y, a.size_z, d.material_name, a.artwork_location, " +
+                        "c.artwork_type_name, a.time_period, c.rarity_name, c.medium_name, " +
+                        "a.size_x, a.size_y, a.size_z, c.material_name, a.artwork_location, " +
                         "c.art_movement_name, a.acquisition_way, a.artwork_description, a.artwork_status, " +
                         "b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
-                        "FROM artwork a, artist b, art_movement c, material d, medium e, rarity f, artwork_type g " +
-                        "WHERE a.artist_id = b.artist_id AND a.artwork_type_id = g.artwork_type_id AND a.art_movement_id = c.art_movement_id " +
-                        "AND a.material_id = d.material_id AND a.medium_id = e.medium_id AND a.rarity_id = f.rarity_id " +
+                        "FROM artwork a, artist b, artwork_details c " +
+                        "WHERE a.artist_id = b.artist_id AND a.artwork_id = c.artwork_id " +
                         "AND a.artwork_description LIKE CONCAT('%',:search_key,'%')) " +
                         "SELECT a.user_id, a.artist_id, a.artwork_id, a.fixed_price, a.artwork_type_name, " +
                         "a.time_period, a.rarity_name, a.medium_name, a.size_x, a.size_y, a.size_z, " +
@@ -670,14 +663,12 @@ public class ArtworkDao {
         CustomSqlParameters params = CustomSqlParameters.create();
         //@formatter:off
         String sql =
-                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, g.artwork_type_name, " +
-                        "a.time_period, f.rarity_name, e.medium_name, a.size_x, a.size_y, a.size_z, " +
-                        "d.material_name, a.artwork_location, c.art_movement_name, a.acquisition_way, " +
+                "SELECT a.artwork_name, a.user_id, a.artist_id, a.artwork_id, a.fixed_price, c.artwork_type_name, " +
+                        "a.time_period, c.rarity_name, c.medium_name, a.size_x, a.size_y, a.size_z, " +
+                        "c.material_name, a.artwork_location, c.art_movement_name, a.acquisition_way, " +
                         "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
-                        "FROM artwork a, artist b, art_movement c, material d, medium e, rarity f, artwork_type g " +
-                        "WHERE a.artist_id = b.artist_id AND a.artwork_type_id = g.artwork_type_id " +
-                        "AND a.art_movement_id = c.art_movement_id AND a.material_id = d.material_id " +
-                        "AND a.medium_id = e.medium_id AND a.rarity_id = f.rarity_id ";
+                        "FROM artwork a, artist b, artwork_details c " +
+                        "WHERE a.artist_id = b.artist_id AND a.artwork_id = c.artwork_id ";
         //@formatter:on
 
         return jdbcTemplate.query(sql, params, (rs, rnum) -> {
