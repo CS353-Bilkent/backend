@@ -145,28 +145,32 @@ public class ArtworkService {
     }
 
     public void updateArtworkDescription(Integer artworkId, String newDescription) {
-        ArtworkDto artworkDto = artworkDao.getByArtworkId(artworkId).orElseThrow(() -> new RuntimeException("Artwork not found"));
-        artworkDto.setArtworkDescription(newDescription);
+        Artwork artwork = artworkDao.getArtworkByArtworkId(artworkId);
+        if(artwork == null) {
+            throw new ArtworkException("Artwork not found", HttpStatus.NOT_FOUND);
+        }
+        artwork.setArtworkDescription(newDescription);
+
         //@formatter:off
         artworkDao.updateArtwork(Artwork.builder()
-                .artworkName(artworkDto.getArtworkName())
-                .artworkId(artworkDto.getArtworkId())
-                .userId(artworkDto.getUserId())
-                .artistId(artworkDto.getArtistId())
-                .fixedPrice(artworkDto.getFixedPrice())
-                .artworkTypeId(artworkDto.getArtworkTypeId())
-                .timePeriod(artworkDto.getTimePeriod())
-                .rarityId(artworkDto.getRarityId())
-                .mediumId(artworkDto.getMediumId())
-                .sizeX(artworkDto.getSizeX())
-                .sizeY(artworkDto.getSizeY())
-                .sizeZ(artworkDto.getSizeZ())
-                .materialId(artworkDto.getMaterialId())
-                .artworkLocation(artworkDto.getArtworkLocation())
-                .artMovementId(artworkDto.getArtMovementId())
-                .acquisitionWay(artworkDto.getAcquisitionWay())
-                .artworkDescription(artworkDto.getArtworkDescription())
-                .artworkStatus(artworkDto.getArtworkStatus())
+                .artworkName(artwork.getArtworkName())
+                .artworkId(artwork.getArtworkId())
+                .userId(artwork.getUserId())
+                .artistId(artwork.getArtistId())
+                .fixedPrice(artwork.getFixedPrice())
+                .artworkTypeId(artwork.getArtworkTypeId())
+                .timePeriod(artwork.getTimePeriod())
+                .rarityId(artwork.getRarityId())
+                .mediumId(artwork.getMediumId())
+                .sizeX(artwork.getSizeX())
+                .sizeY(artwork.getSizeY())
+                .sizeZ(artwork.getSizeZ())
+                .materialId(artwork.getMaterialId())
+                .artworkLocation(artwork.getArtworkLocation())
+                .artMovementId(artwork.getArtMovementId())
+                .acquisitionWay(artwork.getAcquisitionWay())
+                .artworkDescription(artwork.getArtworkDescription())
+                .artworkStatus(artwork.getArtworkStatus())
                 .build());
         //@formatter:on
     }
