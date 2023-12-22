@@ -82,8 +82,9 @@ public class BidDao {
 
     public Integer getAuctionOwner(Integer bid_id) {
         CustomSqlParameters params = CustomSqlParameters.create();
+        params.put("bid_id", bid_id);
 
-        String sql = "SELECT a.user_id " + "FROM bid b , auction a" + "WHERE b.auction_id = a.auction_id AND b.bid_id = :bid_id";
+        String sql = "SELECT a.user_id FROM bid b , auction a WHERE b.auction_id = a.auction_id AND b.bid_id = :bid_id";
 
         return jdbcTemplate.queryForObject(sql, params, (rs, rnum) -> {
             ResultSetWrapper rsw = new ResultSetWrapper(rs);
