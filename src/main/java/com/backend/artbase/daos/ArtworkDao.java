@@ -26,7 +26,6 @@ public class ArtworkDao {
     private final CustomJdbcTemplate jdbcTemplate;
 
     public void saveArtwork(Artwork artwork) {
-        String artworkStatus = artwork.getArtworkStatus().getCode();
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("artwork_name", artwork.getArtworkName());
         params.put("user_id", artwork.getUserId());
@@ -45,14 +44,13 @@ public class ArtworkDao {
         params.put("art_movement_id", artwork.getArtMovementId());
         params.put("acquisition_way", artwork.getAcquisitionWay());
         params.put("artwork_description", artwork.getArtworkDescription());
-        params.put("artwork_status", artworkStatus);
-
+        params.put("artwork_status", "A");
         //@formatter:off
         String sql =
                 "INSERT INTO artwork (artwork_name, user_id, artist_id, artwork_id, fixed_price, artwork_type_id, " +
                         "time_period, rarity_id, medium_id, size_x, size_y, size_z, material_id, " +
                         "artwork_location, art_movement_id, acquisition_way, artwork_description, artwork_status) " +
-                        "VALUES (:user_id, :artist_id, :artwork_id, :fixed_price, :artwork_type_id, " +
+                        "VALUES (:artwork_name,:user_id, :artist_id, :artwork_id, :fixed_price, :artwork_type_id, " +
                         ":time_period, :rarity_id, :medium_id, :size_x, :size_y, :size_z, :material_id, " +
                         ":artwork_location, :art_movement_id, :acquisition_way, :artwork_description, :artwork_status)";
 
@@ -704,7 +702,7 @@ public class ArtworkDao {
         });
     }
 
-    public Artwork getArtworkByArtworkId(Integer artworkId){
+    public Artwork getArtworkByArtworkId(Integer artworkId) {
 
         CustomSqlParameters params = CustomSqlParameters.create();
         params.put("artwork_id", artworkId);

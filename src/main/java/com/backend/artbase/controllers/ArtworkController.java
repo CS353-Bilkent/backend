@@ -56,8 +56,7 @@ public class ArtworkController {
             @RequestPart(name = "artworkLocation", required = false) String artworkLocation,
             @RequestPart(name = "artMovementId") Integer artMovementId,
             @RequestPart(name = "acquisitionWay") String acquisitionWay,
-            @RequestPart(name = "artworkDescription", required = false) String artworkDescription,
-            @RequestPart(name = "artworkStatus", required = false) String artworkStatus
+            @RequestPart(name = "artworkDescription", required = false) String artworkDescription
     ) {
         //@formatter:on
         try {
@@ -65,8 +64,7 @@ public class ArtworkController {
             Artwork artwork = Artwork.builder().userId(userId).artistId(artistId).artworkName(artworkName).fixedPrice(fixedPrice)
                     .artworkTypeId(artworkTypeId).timePeriod(timePeriod).rarityId(rarityId).mediumId(mediumId).sizeX(sizeX).sizeY(sizeY)
                     .sizeZ(sizeZ).materialId(materialId).artworkLocation(artworkLocation).artMovementId(artMovementId)
-                    .acquisitionWay(acquisitionWay).artworkDescription(artworkDescription)
-                    .artworkStatus(ArtworkStatus.fromCode(artworkStatus)).build();
+                    .acquisitionWay(acquisitionWay).artworkDescription(artworkDescription).build();
 
             return ResponseEntity.ok(
                     ApiResponse.<UploadArtworkResponse>builder().operationResultData(artworkService.saveArtwork(artwork, image)).build());
