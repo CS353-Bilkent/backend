@@ -72,15 +72,6 @@ public class ArtworkService {
         return artworkDto.get();
     }
 
-    public List<ArtworkDto> getArtworks(List<Integer> artworkId) {
-        List<ArtworkDto> artwork = artworkDao.getByArtworksIds(artworkId);
-        if (artwork.isEmpty()) {
-            throw new ArtworkException("Artwork with given ID cannot be found", HttpStatus.NOT_FOUND);
-        }
-
-        return artwork;
-    }
-
     public ArtworkDisplayDetails getArtworkDisplayDetails(Integer artworkId) {
         ArtworkDto artworkDto = getArtwork(artworkId);
         List<String> filenames = fileDao.getArtworkFilenames(artworkId);
