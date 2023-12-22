@@ -158,7 +158,7 @@ public class ArtworkDao {
                         "c.material_name, a.artwork_location, c.art_movement_name, a.acquisition_way, " +
                         "a.artwork_description, a.artwork_status, b.artist_name, b.gender, b.nationality, b.age, b.speciality " +
                         "FROM artwork a, artist b, artwork_details c " +
-                        "WHERE  a.artist_id = b.artist_id AND a.artwork_id = c.artwork_id";
+                        "WHERE  a.artist_id = b.artist_id AND a.artwork_id = c.artwork_id AND a.artist_id :artist_id";
         //@formatter:on
 
         return jdbcTemplate.query(sql, params, (rs, rnum) -> {
